@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>길드노트</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 4 L41 10 V22 C41 33 34 41 24 45 C14 41 7 33 7 22 V10 Z' fill='%23EFE9FC' stroke='%236E56CF' stroke-width='2.5'/%3E%3Cpath d='M24 15 L27 22 L34.5 22.8 L29 27.8 L30.6 35 L24 31 L17.4 35 L19 27.8 L13.5 22.8 L21 22 Z' fill='%236E56CF'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  :root {
+    --bg: #F5F3FC;
+    --paper: #FFFFFF;
+    --paper-border: #E4DFF5;
+    --rail-bg: #EDE7FB;
+    --ink: #362F4D;
+    --ink-soft: #6C6485;
+    --ink-faint: #9C93B8;
+    --accent: #6E56CF;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #EFE9FC;
+    --positive: #2FAE83;
+    --positive-soft: #E1F6EE;
+    --negative: #E2634F;
+    --negative-soft: #FBE7E2;
+    --shadow: rgba(54, 47, 77, 0.10);
+    --focus: #6E56CF;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1C1830; --paper: #262040; --paper-border: #3A3358; --rail-bg: #221D3B;
+      --ink: #EDE9FA; --ink-soft: #B3A9D6; --ink-faint: #7C7299;
+      --accent: #9C8CF0; --accent-ink: #1C1830; --accent-soft: #332A54;
+      --positive: #52D1A3; --positive-soft: #1D3A30;
+      --negative: #F08670; --negative-soft: #3E241F;
+      --shadow: rgba(0, 0, 0, 0.45); --focus: #B3A2F7;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1C1830; --paper: #262040; --paper-border: #3A3358; --rail-bg: #221D3B;
+    --ink: #EDE9FA; --ink-soft: #B3A9D6; --ink-faint: #7C7299;
+    --accent: #9C8CF0; --accent-ink: #1C1830; --accent-soft: #332A54;
+    --positive: #52D1A3; --positive-soft: #1D3A30;
+    --negative: #F08670; --negative-soft: #3E241F;
+    --shadow: rgba(0, 0, 0, 0.45); --focus: #B3A2F7;
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); margin: 0; }
+  body {
+    color: var(--ink);
+    font-family: 'Gowun Dodum', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .display { font-family: 'Jua', 'Gowun Dodum', sans-serif; font-weight: 400; text-wrap: balance; }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  button, input, select { font-family: inherit; }
+  a { color: var(--accent); }
+
+  #app { min-height: 100vh; display: flex; flex-direction: column; }
+
+  .topbar {
+    display: flex; align-items: center; gap: 12px; padding: 14px 20px;
+    background: var(--paper); border-bottom: 1px solid var(--paper-border);
+    position: sticky; top: 0; z-index: 20;
+  }
+  .crest { flex: none; width: 38px; height: 38px; }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; }
+  .brand-title { font-family: 'Jua', sans-serif; font-size: 20px; color: var(--accent); }
+  .brand-sub { font-size: 12px; color: var(--ink-faint); }
+  .topbar-date {
+    margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink-soft);
+    background: var(--accent-soft); padding: 6px 12px; border-radius: 999px; white-space: nowrap;
+  }
+
+  .layout { flex: 1; display: flex; width: 100%; max-width: 1080px; margin: 0 auto; padding: 20px; gap: 20px; }
+  .tabrail {
+    flex: none; width: 176px; display: flex; flex-direction: column; gap: 6px;
+    background: var(--rail-bg); border: 1px solid var(--paper-border); border-radius: 18px; padding: 12px;
+    height: fit-content; position: sticky; top: 84px;
+  }
+  .tabbtn {
+    display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 12px; border: none;
+    background: transparent; color: var(--ink-soft); font-size: 15px; cursor: pointer; text-align: left;
+    transition: background .15s ease, color .15s ease;
+  }
+  .tabbtn svg { flex: none; width: 20px; height: 20px; }
+  .tabbtn:hover { background: var(--accent-soft); color: var(--ink); }
+  .tabbtn.active { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  .tabbtn .badge {
+    margin-left: auto; background: var(--negative); color: #fff; border-radius: 999px; font-size: 11px;
+    min-width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center;
+    padding: 0 5px; font-family: 'JetBrains Mono', monospace;
+  }
+  .tabbtn.active .badge { background: rgba(255,255,255,.35); }
+
+  .content { flex: 1; min-width: 0; }
+  .panel {
+    background: var(--paper); border: 1px solid var(--paper-border); border-radius: 20px; padding: 24px;
+    box-shadow: 0 6px 20px var(--shadow);
+  }
+  .hidden { display: none !important; }
+  .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+  .panel-head h2 { margin: 0; font-size: 22px; color: var(--ink); }
+  .panel-head p { margin: 4px 0 0; color: var(--ink-soft); font-size: 13.5px; }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .stat-tile { background: var(--accent-soft); border-radius: 14px; padding: 14px 16px; }
+  .stat-tile .num { font-family: 'Jua', sans-serif; font-size: 26px; color: var(--accent); display: block; }
+  .stat-tile .label { font-size: 12.5px; color: var(--ink-soft); }
+  .stat-tile.positive { background: var(--positive-soft); }
+  .stat-tile.positive .num { color: var(--positive); }
+  .stat-tile.negative { background: var(--negative-soft); }
+  .stat-tile.negative .num { color: var(--negative); }
+
+  .chip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .chip {
+    display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px;
+    border: 1.5px dashed var(--negative); background: var(--negative-soft);
+  }
+  .chip.checked { border-style: solid; border-color: var(--positive); background: var(--positive-soft); }
+  .chip .avatar {
+    flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--accent-ink);
+    display: flex; align-items: center; justify-content: center; font-family: 'Jua', sans-serif; font-size: 14px;
+  }
+  .chip .name { font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chip .tag { margin-left: auto; font-size: 11px; color: var(--negative); flex: none; }
+  .chip.checked .tag { color: var(--positive); }
+
+  .empty { text-align: center; padding: 40px 20px; color: var(--ink-soft); }
+  .empty svg { width: 56px; height: 56px; color: var(--ink-faint); margin-bottom: 10px; }
+  .empty .big { font-family: 'Jua', sans-serif; font-size: 17px; color: var(--ink); margin-bottom: 4px; }
+
+  .rank-list { display: flex; flex-direction: column; gap: 10px; }
+  .rank-row {
+    display: grid; grid-template-columns: 34px 1fr auto auto; align-items: center; gap: 12px;
+    padding: 12px 14px; border: 1px solid var(--paper-border); border-radius: 14px;
+  }
+  .rank-row .avatar {
+    width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--accent-ink);
+    display: flex; align-items: center; justify-content: center; font-family: 'Jua', sans-serif; font-size: 13px;
+  }
+  .rank-row .who .rname { font-weight: 600; }
+  .rank-row .who .rmeta { font-size: 12px; color: var(--ink-faint); }
+  .rank-row .wl { font-family: 'JetBrains Mono', monospace; font-size: 13px; text-align: right; }
+  .rank-row .wl b.w { color: var(--positive); }
+  .rank-row .wl b.l { color: var(--negative); }
+  .dots { display: flex; gap: 3px; justify-content: flex-end; margin-top: 3px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--positive); }
+  .dot.l { background: var(--negative); }
+
+  .section { margin-bottom: 26px; }
+  .section h3 { font-size: 16px; margin: 0 0 4px; color: var(--ink); }
+  .section .hint { font-size: 12.5px; color: var(--ink-faint); margin: 0 0 12px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  input[type="text"], input[type="password"], input[type="number"], input[type="date"], select {
+    background: var(--bg); border: 1.5px solid var(--paper-border); color: var(--ink); border-radius: 10px;
+    padding: 9px 12px; font-size: 14px; outline: none;
+  }
+  input:focus, select:focus { border-color: var(--focus); }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px; background: var(--accent); color: var(--accent-ink);
+    border: none; border-radius: 10px; padding: 9px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  .btn:hover { filter: brightness(1.06); }
+  .btn.ghost { background: transparent; color: var(--ink-soft); border: 1.5px solid var(--paper-border); }
+  .btn.danger { background: var(--negative); }
+  .btn.small { padding: 6px 11px; font-size: 12.5px; border-radius: 8px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--paper-border); border-radius: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 480px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--paper-border); white-space: nowrap; }
+  th { color: var(--ink-faint); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  tr:last-child td { border-bottom: none; }
+  td input[type="number"] { width: 72px; }
+  td input[type="text"] { width: 120px; }
+
+  .toggle-chip {
+    display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 12px; cursor: pointer;
+    user-select: none; border: 1.5px dashed var(--negative); background: var(--negative-soft);
+  }
+  .toggle-chip.on { border-style: solid; border-color: var(--positive); background: var(--positive-soft); }
+  .toggle-chip .dotstate { width: 9px; height: 9px; border-radius: 50%; background: var(--negative); flex: none; }
+  .toggle-chip.on .dotstate { background: var(--positive); }
+
+  .lockbox { max-width: 340px; margin: 30px auto; text-align: center; }
+  .lockbox svg { width: 44px; height: 44px; color: var(--accent); margin-bottom: 10px; }
+  .lockbox .err { color: var(--negative); font-size: 13px; min-height: 18px; margin-top: 8px; }
+  .lockbox form { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+
+  #toastRoot { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .toast { background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-size: 13.5px; box-shadow: 0 6px 18px var(--shadow); }
+  #modalRoot { position: fixed; inset: 0; z-index: 200; }
+  .modal-back { position: absolute; inset: 0; background: rgba(20, 16, 36, .45); display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .modal-card { background: var(--paper); border-radius: 18px; padding: 22px; max-width: 320px; width: 100%; box-shadow: 0 12px 30px var(--shadow); }
+  .modal-card p { color: var(--ink); font-size: 14.5px; margin: 0 0 16px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+  .bottombar {
+    display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+    background: var(--paper); border-top: 1px solid var(--paper-border);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); justify-content: space-around;
+  }
+  .bottombar .tabbtn { flex-direction: column; gap: 3px; font-size: 10.5px; padding: 6px 4px; border-radius: 10px; flex: 1; align-items: center; position: relative; }
+  .bottombar .tabbtn .badge { position: absolute; margin-left: 14px; margin-top: -14px; }
+
+  .setupNotice { background: var(--negative-soft); color: var(--negative); border-radius: 12px; padding: 12px 16px; font-size: 13px; margin: 14px 20px 0; }
+
+  @media (max-width: 760px) {
+    .tabrail { display: none; }
+    .bottombar { display: flex; }
+    .layout { padding: 14px; padding-bottom: 84px; }
+    .panel { padding: 18px; border-radius: 16px; }
+    .stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .stat-tile { padding: 10px 10px; }
+    .stat-tile .num { font-size: 21px; }
+    .topbar-date { display: none; }
+    .brand-sub { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header class="topbar">
+    <svg class="crest" viewBox="0 0 48 48" fill="none">
+      <path d="M24 4 L41 10 V22 C41 33 34 41 24 45 C14 41 7 33 7 22 V10 Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M24 15 L27 22 L34.5 22.8 L29 27.8 L30.6 35 L24 31 L17.4 35 L19 27.8 L13.5 22.8 L21 22 Z" fill="var(--accent)"/>
+    </svg>
+    <div class="brand">
+      <span class="brand-title">길드노트</span>
+      <span class="brand-sub">우리 길드 출석 · 랭크 기록장</span>
+    </div>
+    <span class="topbar-date mono" id="topbarDate">-</span>
+  </header>
+
+  <div class="layout">
+    <nav class="tabrail" id="tabrail"></nav>
+    <main class="content">
+      <section class="panel" id="panelRoot"><div class="empty">불러오는 중...</div></section>
+    </main>
+  </div>
+
+  <nav class="bottombar" id="bottombar"></nav>
+</div>
+<div id="toastRoot"></div>
+<div id="modalRoot"></div>
+
+<script type="module">
+  /* =========================================================================
+     길드노트 - Firebase 설정
+     아래 firebaseConfig 자리에 Firebase 콘솔에서 복사한 값을 붙여넣으세요.
+     (같이 드린 "배포 가이드" 문서의 3단계를 참고하세요)
+     ========================================================================= */
+  const firebaseConfig = {
+    apiKey: "여기에_apiKey_붙여넣기",
+    authDomain: "여기에_authDomain_붙여넣기",
+    projectId: "여기에_projectId_붙여넣기",
+    storageBucket: "여기에_storageBucket_붙여넣기",
+    messagingSenderId: "여기에_messagingSenderId_붙여넣기",
+    appId: "여기에_appId_붙여넣기"
+  };
+  /* ========================================================================= */
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc,
+    collection, query, orderBy, limit, onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+  var CONFIG_OK = firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf("여기에") === -1;
+  var app = null, db = null;
+  if (CONFIG_OK) {
+    try { app = initializeApp(firebaseConfig); db = getFirestore(app); } catch (e) { db = null; }
+  }
+
+  /* ---------------- icons ---------------- */
+  var ICONS = {
+    attendance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2.5"/><path d="M9 3.5h6v2.4a1 1 0 0 1-1 1H10a1 1 0 0 1-1-1z" fill="currentColor" stroke="none"/><path d="M8.5 13.5l2.4 2.4L15.7 11"/></svg>',
+    rank: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 5H5a1 1 0 0 0-1 1c0 2.2 1.6 4 3.6 4.3"/><path d="M16 5h3a1 1 0 0 1 1 1c0 2.2-1.6 4-3.6 4.3"/><path d="M12 13v3"/><path d="M9 20h6"/><path d="M9.5 20c0-1.7.9-2.6 2.5-2.6s2.5.9 2.5 2.6"/></svg>',
+    warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 21.5 20h-19z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.3" r="0.9" fill="currentColor" stroke="none"/></svg>',
+    admin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l2-1.4-2-3.4-2.3.8a7.6 7.6 0 0 0-2.6-1.5L14 2.5h-4l-.5 2.5a7.6 7.6 0 0 0-2.6 1.5l-2.3-.8-2 3.4 2 1.4a7.6 7.6 0 0 0 0 3l-2 1.4 2 3.4 2.3-.8a7.6 7.6 0 0 0 2.6 1.5l.5 2.5h4l.5-2.5a7.6 7.6 0 0 0 2.6-1.5l2.3.8 2-3.4z"/></svg>',
+    lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2.2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg>',
+    empty: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V7a2 2 0 0 1 2-2h6l2 2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>',
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>'
+  };
+  var TAB_DEFS = [
+    { id: "attendance", label: "출석체크", icon: ICONS.attendance },
+    { id: "rank", label: "길드 랭크", icon: ICONS.rank },
+    { id: "warning", label: "경고 · 주의", icon: ICONS.warning },
+    { id: "admin", label: "관리", icon: ICONS.admin }
+  ];
+
+  /* ---------------- state ---------------- */
+  var currentTab = "attendance";
+  var members = [];
+  var settings = {};
+  var settingsLoaded = false;
+  var attendanceToday = { checkedIds: [] };
+  var rankRecords = [];
+  var isAdmin = false;
+  var adminDate = toDateKey(new Date());
+  var adminAttendanceDoc = { checkedIds: [] };
+  var adminUnsubAttendance = null;
+
+  try { isAdmin = sessionStorage.getItem("gn_admin") === "1"; } catch (e) {}
+
+  /* ---------------- helpers ---------------- */
+  function toDateKey(d) {
+    var y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, "0"), day = String(d.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + day;
+  }
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function initials(name) { var s = (name || "").trim(); return s ? s.slice(0, 1) : "?"; }
+  function fmtDateLong(dateKey) {
+    var d = new Date(dateKey + "T00:00:00");
+    if (isNaN(d)) return dateKey;
+    return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "short" }).format(d);
+  }
+  function fmtDateShort(dateKey) {
+    var d = new Date(dateKey + "T00:00:00");
+    if (isNaN(d)) return dateKey;
+    return new Intl.DateTimeFormat("ko-KR", { month: "2-digit", day: "2-digit" }).format(d);
+  }
+  function toast(msg) {
+    var root = document.getElementById("toastRoot");
+    var el = document.createElement("div");
+    el.className = "toast"; el.textContent = msg;
+    root.appendChild(el);
+    setTimeout(function () { el.remove(); }, 2200);
+  }
+  function confirmDialog(message, okLabel) {
+    return new Promise(function (resolve) {
+      var root = document.getElementById("modalRoot");
+      root.innerHTML =
+        '<div class="modal-back"><div class="modal-card">' +
+        "<p>" + escapeHtml(message) + "</p>" +
+        '<div class="modal-actions">' +
+        '<button class="btn ghost" data-act="no">취소</button>' +
+        '<button class="btn danger" data-act="yes">' + escapeHtml(okLabel || "확인") + "</button>" +
+        "</div></div></div>";
+      root.querySelector('[data-act="no"]').onclick = function () { root.innerHTML = ""; resolve(false); };
+      root.querySelector('[data-act="yes"]').onclick = function () { root.innerHTML = ""; resolve(true); };
+      root.querySelector(".modal-back").addEventListener("click", function (e) {
+        if (e.target.classList.contains("modal-back")) { root.innerHTML = ""; resolve(false); }
+      });
+    });
+  }
+  function memberById(id) { for (var i = 0; i < members.length; i++) if (members[i].id === id) return members[i]; return null; }
+
+  /* ---------------- boot ---------------- */
+  function boot() {
+    document.getElementById("topbarDate").textContent = fmtDateShort(toDateKey(new Date()));
+
+    if (!CONFIG_OK || !db) {
+      document.getElementById("panelRoot").innerHTML =
+        '<div class="empty">' + ICONS.empty +
+        '<div class="big">Firebase 설정이 아직 안 되어 있어요</div>' +
+        "<p>index.html 위쪽의 firebaseConfig 자리에 배포 가이드에서 안내한 값을 붙여넣어주세요.</p></div>";
+      return;
+    }
+
+    onSnapshot(doc(db, "config", "settings"), function (snap) {
+      settings = snap.exists() ? (snap.data() || {}) : {};
+      settingsLoaded = true;
+      render();
+    }, function () {});
+
+    onSnapshot(query(collection(db, "members"), orderBy("order", "asc")), function (qs) {
+      members = qs.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+      render();
+    }, function () {});
+
+    var todayKey = toDateKey(new Date());
+    onSnapshot(doc(db, "attendance", todayKey), function (snap) {
+      attendanceToday = snap.exists() ? (snap.data() || { checkedIds: [] }) : { checkedIds: [] };
+      render();
+    }, function () {});
+
+    onSnapshot(query(collection(db, "rankRecords"), orderBy("date", "desc"), limit(500)), function (qs) {
+      rankRecords = qs.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+      render();
+    }, function () {});
+
+    watchAdminAttendance();
+    buildNav();
+    render();
+  }
+
+  function watchAdminAttendance() {
+    if (adminUnsubAttendance) { adminUnsubAttendance(); adminUnsubAttendance = null; }
+    if (!db) return;
+    adminUnsubAttendance = onSnapshot(doc(db, "attendance", adminDate), function (snap) {
+      adminAttendanceDoc = snap.exists() ? (snap.data() || { checkedIds: [] }) : { checkedIds: [] };
+      if (currentTab === "admin") render();
+    }, function () {});
+  }
+
+  /* ---------------- nav ---------------- */
+  function buildNav() {
+    var notCheckedCount = members.filter(function (m) { return (attendanceToday.checkedIds || []).indexOf(m.id) === -1; }).length;
+    var warnCount = members.filter(function (m) { return Number(m.points || 0) < Number(settings.pointThreshold || 0); }).length;
+    var badges = { attendance: notCheckedCount, warning: warnCount };
+
+    [document.getElementById("tabrail"), document.getElementById("bottombar")].forEach(function (rail) {
+      rail.innerHTML = TAB_DEFS.map(function (t) {
+        var badge = badges[t.id] ? '<span class="badge">' + badges[t.id] + "</span>" : "";
+        return '<button class="tabbtn' + (currentTab === t.id ? " active" : "") + '" data-tab="' + t.id + '">' + t.icon + "<span>" + t.label + "</span>" + badge + "</button>";
+      }).join("");
+      Array.prototype.forEach.call(rail.querySelectorAll(".tabbtn"), function (btn) {
+        btn.onclick = function () { currentTab = btn.getAttribute("data-tab"); render(); };
+      });
+    });
+  }
+
+  /* ---------------- render dispatch ---------------- */
+  function render() {
+    buildNav();
+    var root = document.getElementById("panelRoot");
+    if (currentTab === "attendance") root.innerHTML = renderAttendance();
+    else if (currentTab === "rank") root.innerHTML = renderRank();
+    else if (currentTab === "warning") root.innerHTML = renderWarning();
+    else root.innerHTML = renderAdmin();
+    wireTabEvents();
+  }
+
+  /* ---------------- attendance tab ---------------- */
+  function renderAttendance() {
+    var checked = attendanceToday.checkedIds || [];
+    var notChecked = members.filter(function (m) { return checked.indexOf(m.id) === -1; });
+    var checkedCount = members.length - notChecked.length;
+
+    var body;
+    if (members.length === 0) {
+      body = emptyState("아직 등록된 길드원이 없어요", "관리 탭에서 길드원을 먼저 추가해주세요.");
+    } else if (notChecked.length === 0) {
+      body = emptyState("오늘은 모두 출석했어요", "길드원 전원이 출석체크를 완료했습니다.", ICONS.check);
+    } else {
+      body = '<div class="chip-grid">' + notChecked.map(function (m) {
+        return '<div class="chip"><span class="avatar">' + escapeHtml(initials(m.name)) + '</span><span class="name">' + escapeHtml(m.name) + '</span><span class="tag">미출석</span></div>';
+      }).join("") + "</div>";
+    }
+
+    return (
+      '<div class="panel-head"><div><h2>출석체크</h2><p>' + fmtDateLong(toDateKey(new Date())) + " 기준</p></div></div>" +
+      '<div class="stats">' +
+      statTile(members.length, "전체 길드원", "") +
+      statTile(checkedCount, "출석 완료", "positive") +
+      statTile(notChecked.length, "출석 미완료", "negative") +
+      "</div>" + body
+    );
+  }
+
+  /* ---------------- rank tab ---------------- */
+  function renderRank() {
+    var byMember = {};
+    rankRecords.forEach(function (r) {
+      var key = r.memberId || r.memberName;
+      if (!byMember[key]) byMember[key] = { name: r.memberName, wins: 0, losses: 0, last: r.date, recent: [] };
+      if (r.result === "win") byMember[key].wins++; else byMember[key].losses++;
+      if (!byMember[key].last || r.date > byMember[key].last) byMember[key].last = r.date;
+      byMember[key].recent.push(r);
+    });
+    var list = Object.keys(byMember).map(function (k) { return byMember[k]; });
+    list.forEach(function (p) { p.recent.sort(function (a, b) { return b.date < a.date ? -1 : 1; }); p.recent = p.recent.slice(0, 5); });
+    list.sort(function (a, b) { return (b.wins - b.losses) - (a.wins - a.losses); });
+
+    var totalWins = list.reduce(function (s, p) { return s + p.wins; }, 0);
+    var totalLosses = list.reduce(function (s, p) { return s + p.losses; }, 0);
+    var totalGames = totalWins + totalLosses;
+    var winRate = totalGames ? Math.round((totalWins / totalGames) * 100) : 0;
+
+    var body;
+    if (list.length === 0) {
+      body = emptyState("아직 랭크 기록이 없어요", "관리 탭에서 길드 랭크 결과를 입력하면 여기에 표시돼요.");
+    } else {
+      body = '<div class="rank-list">' + list.map(function (p) {
+        var games = p.wins + p.losses;
+        var rate = games ? Math.round((p.wins / games) * 100) : 0;
+        var dots = p.recent.map(function (r) { return '<span class="dot' + (r.result === "loss" ? " l" : "") + '"></span>'; }).join("");
+        return (
+          '<div class="rank-row">' +
+          '<span class="avatar">' + escapeHtml(initials(p.name)) + "</span>" +
+          '<div class="who"><div class="rname">' + escapeHtml(p.name || "(이름없음)") + '</div><div class="rmeta">최근 참여 ' + fmtDateShort(p.last) + "</div></div>" +
+          '<div class="wl"><b class="w">' + p.wins + "승</b> <b class=\"l\">" + p.losses + "패</b><br><span style=\"color:var(--ink-faint)\">승률 " + rate + "%</span></div>" +
+          '<div class="dots">' + dots + "</div>" +
+          "</div>"
+        );
+      }).join("") + "</div>";
+    }
+
+    return (
+      '<div class="panel-head"><div><h2>길드 랭크</h2><p>길드 랭크에 참여 중인 길드원의 전적이에요.</p></div></div>' +
+      '<div class="stats">' +
+      statTile(list.length, "참여 인원", "") +
+      statTile(totalWins + "승 " + totalLosses + "패", "전체 전적", "") +
+      statTile(winRate + "%", "전체 승률", "positive") +
+      "</div>" + body
+    );
+  }
+
+  /* ---------------- warning tab ---------------- */
+  function renderWarning() {
+    var threshold = Number(settings.pointThreshold || 0);
+    var low = members.filter(function (m) { return Number(m.points || 0) < threshold; })
+      .sort(function (a, b) { return Number(a.points || 0) - Number(b.points || 0); });
+
+    var body;
+    if (members.length === 0) {
+      body = emptyState("아직 등록된 길드원이 없어요", "관리 탭에서 길드원을 먼저 추가해주세요.");
+    } else if (low.length === 0) {
+      body = emptyState("주의가 필요한 길드원이 없어요", "모든 길드원의 활동 포인트가 기준 이상이에요.", ICONS.check);
+    } else {
+      body = '<div class="table-wrap"><table><thead><tr><th>길드원</th><th>활동 포인트</th><th>기준과의 차이</th></tr></thead><tbody>' +
+        low.map(function (m) {
+          var diff = Number(m.points || 0) - threshold;
+          return "<tr><td>" + escapeHtml(m.name) + "</td><td class=\"mono\">" + Number(m.points || 0) + "</td><td class=\"mono\" style=\"color:var(--negative)\">" + diff + "</td></tr>";
+        }).join("") + "</tbody></table></div>";
+    }
+
+    return '<div class="panel-head"><div><h2>경고 · 주의</h2><p>활동 포인트가 기준(' + threshold + "점) 미만인 길드원이에요.</p></div></div>" + body;
+  }
+
+  /* ---------------- admin tab ---------------- */
+  function renderAdmin() {
+    if (!settingsLoaded) return '<div class="empty">불러오는 중...</div>';
+
+    if (!settings.adminPassword) {
+      return (
+        '<div class="lockbox">' + ICONS.lock +
+        "<h2>관리자 비밀번호 설정</h2>" +
+        '<p style="color:var(--ink-soft);font-size:13.5px">아직 관리자 비밀번호가 없어요. 처음 한 번만 설정하면 돼요.</p>' +
+        '<form id="setupForm">' +
+        '<input type="password" id="setupPw" placeholder="사용할 비밀번호" required>' +
+        '<input type="password" id="setupPw2" placeholder="비밀번호 확인" required>' +
+        '<button class="btn" type="submit">비밀번호 만들기</button>' +
+        '</form><div class="err" id="setupErr"></div>' +
+        '<p style="color:var(--ink-faint);font-size:12px;margin-top:14px">참고: 이 비밀번호는 길드원의 실수 진입을 막는 용도이고, 강력한 보안은 아니에요.</p>' +
+        "</div>"
+      );
+    }
+
+    if (!isAdmin) {
+      return (
+        '<div class="lockbox">' + ICONS.lock +
+        "<h2>관리자 전용</h2>" +
+        '<p style="color:var(--ink-soft);font-size:13.5px">비밀번호를 입력하면 관리 기능을 사용할 수 있어요.</p>' +
+        '<form id="loginForm">' +
+        '<input type="password" id="loginPw" placeholder="관리자 비밀번호" required>' +
+        '<button class="btn" type="submit">입장하기</button>' +
+        '</form><div class="err" id="loginErr"></div>' +
+        "</div>"
+      );
+    }
+
+    var checked = adminAttendanceDoc.checkedIds || [];
+    var memberRows = members.map(function (m) {
+      return (
+        "<tr>" +
+        '<td><input type="text" value="' + escapeHtml(m.name) + '" data-role="mname" data-id="' + m.id + '"></td>' +
+        '<td><input type="number" value="' + Number(m.points || 0) + '" data-role="mpoints" data-id="' + m.id + '"></td>' +
+        '<td><button class="btn danger small" data-role="mdelete" data-id="' + m.id + '">삭제</button></td>' +
+        "</tr>"
+      );
+    }).join("");
+
+    var attendanceChips = members.map(function (m) {
+      var on = checked.indexOf(m.id) !== -1;
+      return '<div class="toggle-chip' + (on ? " on" : "") + '" data-role="toggleatt" data-id="' + m.id + '"><span class="dotstate"></span><span>' + escapeHtml(m.name) + "</span></div>";
+    }).join("");
+
+    var memberOptions = members.map(function (m) { return '<option value="' + m.id + '">' + escapeHtml(m.name) + "</option>"; }).join("");
+
+    var recentRecords = rankRecords.slice(0, 20).map(function (r) {
+      return (
+        "<tr><td>" + fmtDateShort(r.date) + "</td><td>" + escapeHtml(r.memberName || "") + "</td>" +
+        '<td>' + (r.result === "win" ? '<span style="color:var(--positive)">승</span>' : '<span style="color:var(--negative)">패</span>') + "</td>" +
+        '<td><button class="btn ghost small" data-role="rdelete" data-id="' + r.id + '">삭제</button></td></tr>'
+      );
+    }).join("");
+
+    return (
+      '<div class="panel-head"><div><h2>관리</h2><p>길드원 · 출석 · 랭크 · 활동 포인트를 관리해요.</p></div>' +
+      '<button class="btn ghost small" id="logoutBtn">로그아웃</button></div>' +
+
+      '<div class="section">' +
+      "<h3>길드원 관리</h3><p class=\"hint\">이름과 활동 포인트는 입력 후 바로 저장돼요.</p>" +
+      '<div class="row" style="margin-bottom:12px">' +
+      '<input type="text" id="newMemberName" placeholder="새 길드원 이름">' +
+      '<button class="btn" id="addMemberBtn">추가</button>' +
+      "</div>" +
+      (members.length ? '<div class="table-wrap"><table><thead><tr><th>이름</th><th>활동 포인트</th><th></th></tr></thead><tbody>' + memberRows + "</tbody></table></div>" : '<p class="hint">등록된 길드원이 없어요.</p>') +
+      "</div>" +
+
+      '<div class="section">' +
+      "<h3>출석체크 처리</h3><p class=\"hint\">날짜를 고르고 출석한 길드원을 눌러 표시하세요.</p>" +
+      '<div class="row" style="margin-bottom:12px"><input type="date" id="adminDatePick" value="' + adminDate + '"></div>' +
+      (members.length ? '<div class="chip-grid">' + attendanceChips + "</div>" : '<p class="hint">등록된 길드원이 없어요.</p>') +
+      "</div>" +
+
+      '<div class="section">' +
+      "<h3>길드 랭크 기록 추가</h3><p class=\"hint\">길드원, 날짜, 승패 결과를 입력해 기록을 남기세요.</p>" +
+      '<div class="row" style="margin-bottom:12px">' +
+      '<select id="rankMember">' + (memberOptions || "<option value=\"\">길드원 없음</option>") + "</select>" +
+      '<input type="date" id="rankDate" value="' + toDateKey(new Date()) + '">' +
+      '<select id="rankResult"><option value="win">승</option><option value="loss">패</option></select>' +
+      '<button class="btn" id="addRankBtn">기록 추가</button>' +
+      "</div>" +
+      (recentRecords ? '<div class="table-wrap"><table><thead><tr><th>날짜</th><th>길드원</th><th>결과</th><th></th></tr></thead><tbody>' + recentRecords + "</tbody></table></div>" : '<p class="hint">아직 기록이 없어요.</p>') +
+      "</div>" +
+
+      '<div class="section">' +
+      "<h3>경고 · 주의 기준</h3><p class=\"hint\">이 점수 미만인 길드원이 경고 · 주의 탭에 표시돼요.</p>" +
+      '<div class="row"><input type="number" id="thresholdInput" value="' + Number(settings.pointThreshold || 0) + '"><button class="btn" id="saveThresholdBtn">저장</button></div>' +
+      "</div>" +
+
+      '<div class="section">' +
+      "<h3>관리자 비밀번호 변경</h3>" +
+      '<div class="row"><input type="password" id="newPwInput" placeholder="새 비밀번호"><button class="btn ghost" id="changePwBtn">변경</button></div>' +
+      "</div>"
+    );
+  }
+
+  /* ---------------- small render helpers ---------------- */
+  function statTile(num, label, tone) {
+    return '<div class="stat-tile' + (tone ? " " + tone : "") + '"><span class="num">' + num + "</span><span class=\"label\">" + label + "</span></div>";
+  }
+  function emptyState(big, small, icon) {
+    return '<div class="empty">' + (icon || ICONS.empty) + '<div class="big">' + big + "</div><p>" + small + "</p></div>";
+  }
+
+  /* ---------------- event wiring per render ---------------- */
+  function wireTabEvents() {
+    if (currentTab !== "admin") return;
+
+    var setupForm = document.getElementById("setupForm");
+    if (setupForm) {
+      setupForm.onsubmit = async function (e) {
+        e.preventDefault();
+        var pw = document.getElementById("setupPw").value;
+        var pw2 = document.getElementById("setupPw2").value;
+        var err = document.getElementById("setupErr");
+        if (pw.length < 4) { err.textContent = "비밀번호는 4자 이상으로 만들어주세요."; return; }
+        if (pw !== pw2) { err.textContent = "비밀번호가 서로 달라요."; return; }
+        await setDoc(doc(db, "config", "settings"), Object.assign({}, settings, { adminPassword: pw, pointThreshold: Number(settings.pointThreshold || 0) }));
+        isAdmin = true;
+        try { sessionStorage.setItem("gn_admin", "1"); } catch (ex) {}
+        toast("관리자 비밀번호가 설정되었어요");
+      };
+    }
+
+    var loginForm = document.getElementById("loginForm");
+    if (loginForm) {
+      loginForm.onsubmit = function (e) {
+        e.preventDefault();
+        var pw = document.getElementById("loginPw").value;
+        var err = document.getElementById("loginErr");
+        if (pw === settings.adminPassword) {
+          isAdmin = true;
+          try { sessionStorage.setItem("gn_admin", "1"); } catch (ex) {}
+          render();
+        } else {
+          err.textContent = "비밀번호가 올바르지 않아요.";
+        }
+      };
+    }
+
+    var logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) logoutBtn.onclick = function () {
+      isAdmin = false;
+      try { sessionStorage.removeItem("gn_admin"); } catch (ex) {}
+      render();
+    };
+
+    var addMemberBtn = document.getElementById("addMemberBtn");
+    if (addMemberBtn) addMemberBtn.onclick = async function () {
+      var input = document.getElementById("newMemberName");
+      var name = input.value.trim();
+      if (!name) return;
+      var id = "m_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      await setDoc(doc(db, "members", id), { name: name, points: 0, order: Date.now() });
+      input.value = "";
+      toast(name + " 님을 추가했어요");
+    };
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-role="mname"]'), function (el) {
+      el.onchange = async function () {
+        await updateDoc(doc(db, "members", el.getAttribute("data-id")), { name: el.value.trim() || "(이름없음)" });
+        toast("이름을 저장했어요");
+      };
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-role="mpoints"]'), function (el) {
+      el.onchange = async function () {
+        await updateDoc(doc(db, "members", el.getAttribute("data-id")), { points: Number(el.value) || 0 });
+        toast("활동 포인트를 저장했어요");
+      };
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-role="mdelete"]'), function (el) {
+      el.onclick = async function () {
+        var m = memberById(el.getAttribute("data-id"));
+        var ok = await confirmDialog((m ? m.name : "이 길드원") + " 님을 삭제할까요? 출석 · 랭크 기록은 남아있어요.", "삭제");
+        if (!ok) return;
+        await deleteDoc(doc(db, "members", el.getAttribute("data-id")));
+        toast("삭제했어요");
+      };
+    });
+
+    var adminDatePick = document.getElementById("adminDatePick");
+    if (adminDatePick) adminDatePick.onchange = function () {
+      adminDate = adminDatePick.value || toDateKey(new Date());
+      watchAdminAttendance();
+      render();
+    };
+    Array.prototype.forEach.call(document.querySelectorAll('[data-role="toggleatt"]'), function (el) {
+      el.onclick = async function () {
+        var id = el.getAttribute("data-id");
+        var ref = doc(db, "attendance", adminDate);
+        var snap = await getDoc(ref);
+        var ids = (snap.exists() && snap.data().checkedIds) || [];
+        var idx = ids.indexOf(id);
+        if (idx === -1) ids = ids.concat([id]); else { ids = ids.slice(); ids.splice(idx, 1); }
+        await setDoc(ref, { checkedIds: ids });
+      };
+    });
+
+    var addRankBtn = document.getElementById("addRankBtn");
+    if (addRankBtn) addRankBtn.onclick = async function () {
+      var memberSel = document.getElementById("rankMember");
+      var dateInput = document.getElementById("rankDate");
+      var resultSel = document.getElementById("rankResult");
+      if (!memberSel.value) { toast("먼저 길드원을 등록해주세요"); return; }
+      var m = memberById(memberSel.value);
+      await addDoc(collection(db, "rankRecords"), {
+        memberId: memberSel.value,
+        memberName: m ? m.name : "(이름없음)",
+        date: dateInput.value || toDateKey(new Date()),
+        result: resultSel.value,
+        createdAt: Date.now()
+      });
+      toast("기록을 추가했어요");
+    };
+    Array.prototype.forEach.call(document.querySelectorAll('[data-role="rdelete"]'), function (el) {
+      el.onclick = async function () {
+        var ok = await confirmDialog("이 랭크 기록을 삭제할까요?", "삭제");
+        if (!ok) return;
+        await deleteDoc(doc(db, "rankRecords", el.getAttribute("data-id")));
+        toast("삭제했어요");
+      };
+    });
+
+    var saveThresholdBtn = document.getElementById("saveThresholdBtn");
+    if (saveThresholdBtn) saveThresholdBtn.onclick = async function () {
+      var val = Number(document.getElementById("thresholdInput").value) || 0;
+      await updateDoc(doc(db, "config", "settings"), { pointThreshold: val });
+      toast("기준 점수를 저장했어요");
+    };
+
+    var changePwBtn = document.getElementById("changePwBtn");
+    if (changePwBtn) changePwBtn.onclick = async function () {
+      var val = document.getElementById("newPwInput").value;
+      if (val.length < 4) { toast("비밀번호는 4자 이상으로 해주세요"); return; }
+      await updateDoc(doc(db, "config", "settings"), { adminPassword: val });
+      document.getElementById("newPwInput").value = "";
+      toast("비밀번호를 변경했어요");
+    };
+  }
+
+  boot();
+</script>
+</body>
+</html>
