@@ -27,34 +27,15 @@
     --sky-soft: #DFEEFF;
     --gold-soft: #FFF3C4;
   }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #1C1830; --paper: #262040; --paper-border: #3A3358; --rail-bg: #221D3B;
-      --ink: #EDE9FA; --ink-soft: #B3A9D6; --ink-faint: #7C7299;
-      --accent: #9C8CF0; --accent-ink: #1C1830; --accent-soft: #332A54;
-      --positive: #52D1A3; --positive-soft: #1D3A30;
-      --negative: #F08670; --negative-soft: #3E241F;
-      --shadow: rgba(0, 0, 0, 0.45); --focus: #B3A2F7;
-      --sky-soft: #1D3352; --gold-soft: #4A3E18;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #1C1830; --paper: #262040; --paper-border: #3A3358; --rail-bg: #221D3B;
-    --ink: #EDE9FA; --ink-soft: #B3A9D6; --ink-faint: #7C7299;
-    --accent: #9C8CF0; --accent-ink: #1C1830; --accent-soft: #332A54;
-    --positive: #52D1A3; --positive-soft: #1D3A30;
-    --negative: #F08670; --negative-soft: #3E241F;
-    --shadow: rgba(0, 0, 0, 0.45); --focus: #B3A2F7;
-    --sky-soft: #1D3352; --gold-soft: #4A3E18;
-  }
+  /* 항상 라이트 모드로 보이도록 다크 모드 자동 전환은 사용하지 않아요. */
   * { box-sizing: border-box; }
-  html, body { background: var(--bg); margin: 0; }
+  html, body { background: var(--bg); margin: 0; color-scheme: light; }
   body {
     color: var(--ink);
     font-family: 'Gowun Dodum', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3, .display { font-family: 'Jua', 'Gowun Dodum', sans-serif; font-weight: 400; text-wrap: balance; }
+  h1, h2, h3, .display { font-family: 'Jua', 'Gowun Dodum', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-weight: 400; text-wrap: balance; }
   .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
   button, input, select { font-family: inherit; }
   a { color: var(--accent); }
@@ -68,7 +49,7 @@
   }
   .crest { flex: none; width: 38px; height: 38px; }
   .brand { display: flex; flex-direction: column; line-height: 1.15; }
-  .brand-title { font-family: 'Jua', sans-serif; font-size: 20px; color: var(--accent); }
+  .brand-title { font-family: 'Jua', 'Gowun Dodum', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-size: 20px; color: var(--accent); }
   .brand-sub { font-size: 12px; color: var(--ink-faint); }
   .topbar-date {
     margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink-soft);
@@ -108,7 +89,7 @@
 
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
   .stat-tile { background: var(--accent-soft); border-radius: 14px; padding: 14px 16px; }
-  .stat-tile .num { font-family: 'Jua', sans-serif; font-size: 26px; color: var(--accent); display: block; }
+  .stat-tile .num { font-family: 'Jua', 'Gowun Dodum', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-size: 26px; color: var(--accent); display: block; }
   .stat-tile .label { font-size: 12.5px; color: var(--ink-soft); }
   .stat-tile.positive { background: var(--positive-soft); }
   .stat-tile.positive .num { color: var(--positive); }
@@ -123,7 +104,7 @@
   .chip.checked { border-style: solid; border-color: var(--positive); background: var(--positive-soft); }
   .chip .avatar {
     flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--accent-ink);
-    display: flex; align-items: center; justify-content: center; font-family: 'Jua', sans-serif; font-size: 14px;
+    display: flex; align-items: center; justify-content: center; font-family: 'Gowun Dodum', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-size: 14px;
   }
   .chip .name { font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .chip .tag { margin-left: auto; font-size: 11px; color: var(--negative); flex: none; }
@@ -131,7 +112,7 @@
 
   .empty { text-align: center; padding: 40px 20px; color: var(--ink-soft); }
   .empty svg { width: 56px; height: 56px; color: var(--ink-faint); margin-bottom: 10px; }
-  .empty .big { font-family: 'Jua', sans-serif; font-size: 17px; color: var(--ink); margin-bottom: 4px; }
+  .empty .big { font-family: 'Jua', 'Gowun Dodum', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-size: 17px; color: var(--ink); margin-bottom: 4px; }
 
   .rank-list { display: flex; flex-direction: column; gap: 10px; }
   .rank-row {
@@ -140,7 +121,7 @@
   }
   .rank-row .avatar {
     width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--accent-ink);
-    display: flex; align-items: center; justify-content: center; font-family: 'Jua', sans-serif; font-size: 13px;
+    display: flex; align-items: center; justify-content: center; font-family: 'Gowun Dodum', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-size: 13px;
   }
   .rank-row .who .rname { font-weight: 600; }
   .rank-row .who .rmeta { font-size: 12px; color: var(--ink-faint); }
@@ -152,7 +133,7 @@
     width: 25px; height: 25px; border-radius: 50%; background: var(--paper);
     border: 2px solid var(--positive); color: var(--positive);
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Jua', sans-serif; font-size: 11px; flex: none;
+    font-family: 'Jua', 'Gowun Dodum', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-size: 11px; flex: none;
   }
   .stamp.loss { border-color: var(--negative); color: var(--negative); }
   .rank-row.hl-sky { background: var(--sky-soft); }
@@ -713,15 +694,21 @@
     }
 
     var checked = adminAttendanceDoc.checkedIds || [];
+    function typeCheckboxes(m) {
+      return (
+        '<td class="typecell">' +
+        '<label class="minicheck"><input type="checkbox" data-role="mrepute" data-id="' + m.id + '"' + (m.repute ? " checked" : "") + '>명성 유저</label>' +
+        '<label class="minicheck"><input type="checkbox" data-role="mguildrank" data-id="' + m.id + '"' + (m.guildRank ? " checked" : "") + '>길랭 유저</label>' +
+        '<label class="minicheck"><input type="checkbox" data-role="mmanager" data-id="' + m.id + '"' + (m.manager ? " checked" : "") + '>관리자</label>' +
+        "</td>"
+      );
+    }
     function memberRowHtml(m) {
       return (
         "<tr>" +
         '<td><input type="text" value="' + escapeHtml(m.name) + '" data-role="mname" data-id="' + m.id + '"></td>' +
         '<td><input type="number" value="' + Number(m.points || 0) + '" data-role="mpoints" data-id="' + m.id + '"></td>' +
-        '<td class="typecell">' +
-        '<label class="minicheck"><input type="checkbox" data-role="mrepute" data-id="' + m.id + '"' + (m.repute ? " checked" : "") + '>명성 유저</label>' +
-        '<label class="minicheck"><input type="checkbox" data-role="mguildrank" data-id="' + m.id + '"' + (m.guildRank ? " checked" : "") + '>길랭 유저</label>' +
-        "</td>" +
+        typeCheckboxes(m) +
         '<td><button class="btn small ' + (m.lowActivity ? "danger" : "ghost") + '" data-role="mlowtoggle" data-id="' + m.id + '">' + (m.lowActivity ? "활동 포인트 경고 중" : "활동 포인트 경고 지정") + "</button></td>" +
         '<td><button class="btn danger small" data-role="mdelete" data-id="' + m.id + '">삭제</button></td>' +
         "</tr>"
@@ -732,21 +719,30 @@
         "<tr>" +
         '<td><input type="text" value="' + escapeHtml(m.name) + '" data-role="mname" data-id="' + m.id + '"></td>' +
         '<td><input type="number" value="' + Number(m.points || 0) + '" data-role="mpoints" data-id="' + m.id + '"></td>' +
-        '<td class="typecell">' +
-        '<label class="minicheck"><input type="checkbox" data-role="mrepute" data-id="' + m.id + '"' + (m.repute ? " checked" : "") + '>명성 유저</label>' +
-        '<label class="minicheck"><input type="checkbox" data-role="mguildrank" data-id="' + m.id + '"' + (m.guildRank ? " checked" : "") + '>길랭 유저</label>' +
-        "</td>" +
+        typeCheckboxes(m) +
+        '<td><button class="btn danger small" data-role="mdelete" data-id="' + m.id + '">삭제</button></td>' +
+        "</tr>"
+      );
+    }
+    function memberRowHtmlManager(m) {
+      return (
+        "<tr>" +
+        '<td><input type="text" value="' + escapeHtml(m.name) + '" data-role="mname" data-id="' + m.id + '"></td>' +
+        typeCheckboxes(m) +
         '<td><button class="btn danger small" data-role="mdelete" data-id="' + m.id + '">삭제</button></td>' +
         "</tr>"
       );
     }
     var memberTableHead = "<thead><tr><th>이름</th><th>활동 포인트</th><th>유형</th><th>활동 포인트 경고</th><th></th></tr></thead>";
     var memberTableHeadNoWarn = "<thead><tr><th>이름</th><th>활동 포인트</th><th>유형</th><th></th></tr></thead>";
+    var memberTableHeadManager = "<thead><tr><th>이름</th><th>유형</th><th></th></tr></thead>";
     var reputeMembersList = members.filter(function (m) { return !!m.repute; });
     var guildRankMembersList = members.filter(function (m) { return !!m.guildRank; });
-    var unclassifiedMembersList = members.filter(function (m) { return !m.repute && !m.guildRank; });
+    var managerMembersList = members.filter(function (m) { return !!m.manager; });
+    var unclassifiedMembersList = members.filter(function (m) { return !m.repute && !m.guildRank && !m.manager; });
     var reputeMemberRows = reputeMembersList.map(memberRowHtml).join("");
     var guildRankMemberRows = guildRankMembersList.map(memberRowHtmlNoWarn).join("");
+    var managerMemberRows = managerMembersList.map(memberRowHtmlManager).join("");
     var unclassifiedMemberRows = unclassifiedMembersList.map(memberRowHtml).join("");
 
     var attendanceChips = members.map(function (m) {
@@ -781,6 +777,7 @@
       '<input type="text" id="newMemberName" placeholder="새 길드원 이름">' +
       '<label class="minicheck"><input type="checkbox" id="newMemberRepute">명성 유저</label>' +
       '<label class="minicheck"><input type="checkbox" id="newMemberGuildRank">길랭 유저</label>' +
+      '<label class="minicheck"><input type="checkbox" id="newMemberManager">관리자</label>' +
       '<button class="btn" id="addMemberBtn">추가</button>' +
       "</div>" +
       "</div>" +
@@ -795,9 +792,14 @@
       (guildRankMembersList.length ? '<div class="table-wrap"><table>' + memberTableHeadNoWarn + "<tbody>" + guildRankMemberRows + "</tbody></table></div>" : '<p class="hint">등록된 길랭 유저가 없어요.</p>') +
       "</div>" +
 
+      '<div class="section">' +
+      "<h3>관리자</h3><p class=\"hint\">활동 포인트나 경고 없이 이름과 삭제만 관리해요.</p>" +
+      (managerMembersList.length ? '<div class="table-wrap"><table>' + memberTableHeadManager + "<tbody>" + managerMemberRows + "</tbody></table></div>" : '<p class="hint">등록된 관리자가 없어요.</p>') +
+      "</div>" +
+
       (unclassifiedMembersList.length ? (
         '<div class="section">' +
-        "<h3>유형 미지정 길드원</h3><p class=\"hint\">명성 · 길랭 어느 쪽에도 체크되지 않은 길드원이에요.</p>" +
+        "<h3>유형 미지정 길드원</h3><p class=\"hint\">명성 · 길랭 · 관리자 어느 쪽에도 체크되지 않은 길드원이에요.</p>" +
         '<div class="table-wrap"><table>' + memberTableHead + "<tbody>" + unclassifiedMemberRows + "</tbody></table></div>" +
         "</div>"
       ) : "") +
@@ -888,6 +890,7 @@
       var input = document.getElementById("newMemberName");
       var reputeChk = document.getElementById("newMemberRepute");
       var guildRankChk = document.getElementById("newMemberGuildRank");
+      var managerChk = document.getElementById("newMemberManager");
       var name = input.value.trim();
       if (!name) return;
       var id = "m_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -895,11 +898,13 @@
         name: name, points: 0, order: Date.now(),
         repute: !!(reputeChk && reputeChk.checked),
         guildRank: !!(guildRankChk && guildRankChk.checked),
+        manager: !!(managerChk && managerChk.checked),
         lowActivity: false
       });
       input.value = "";
       if (reputeChk) reputeChk.checked = false;
       if (guildRankChk) guildRankChk.checked = false;
+      if (managerChk) managerChk.checked = false;
       toast(name + " 님을 추가했어요");
     };
 
@@ -932,6 +937,11 @@
     Array.prototype.forEach.call(document.querySelectorAll('[data-role="mguildrank"]'), function (el) {
       el.onchange = async function () {
         await updateDoc(doc(db, "members", el.getAttribute("data-id")), { guildRank: el.checked });
+      };
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-role="mmanager"]'), function (el) {
+      el.onchange = async function () {
+        await updateDoc(doc(db, "members", el.getAttribute("data-id")), { manager: el.checked });
       };
     });
     Array.prototype.forEach.call(document.querySelectorAll('[data-role="mlowtoggle"]'), function (el) {
