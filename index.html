@@ -147,6 +147,10 @@
   .section { margin-bottom: 26px; }
   .section h3 { font-size: 16px; margin: 0 0 4px; color: var(--ink); }
   .section .hint { font-size: 12.5px; color: var(--ink-faint); margin: 0 0 12px; }
+  .mini-list { margin: 0; padding: 0 0 0 18px; }
+  .mini-list li { font-size: 12.5px; line-height: 1.65; color: var(--ink-soft); margin-bottom: 7px; }
+  .mini-list li:last-child { margin-bottom: 0; }
+  .mini-list li b { color: var(--ink); }
   .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
   input[type="text"], input[type="password"], input[type="number"], input[type="date"], select {
     background: var(--bg); border: 1.5px solid var(--paper-border); color: var(--ink); border-radius: 10px;
@@ -211,6 +215,13 @@
   .bottombar .tabbtn .badge { position: absolute; margin-left: 14px; margin-top: -14px; }
 
   .setupNotice { background: var(--negative-soft); color: var(--negative); border-radius: 12px; padding: 12px 16px; font-size: 13px; margin: 14px 20px 0; }
+
+  .adminSubNav { display: flex; gap: 8px; flex-wrap: wrap; margin: 2px 0 22px; }
+  .subtabbtn {
+    border: 1.5px solid var(--paper-border); background: var(--paper); color: var(--ink-soft);
+    border-radius: 999px; padding: 8px 14px; font-size: 13px; cursor: pointer;
+  }
+  .subtabbtn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
 
   @media (max-width: 760px) {
     .tabrail { display: none; }
@@ -284,6 +295,7 @@
     rank: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 5H5a1 1 0 0 0-1 1c0 2.2 1.6 4 3.6 4.3"/><path d="M16 5h3a1 1 0 0 1 1 1c0 2.2-1.6 4-3.6 4.3"/><path d="M12 13v3"/><path d="M9 20h6"/><path d="M9.5 20c0-1.7.9-2.6 2.5-2.6s2.5.9 2.5 2.6"/></svg>',
     warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 21.5 20h-19z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.3" r="0.9" fill="currentColor" stroke="none"/></svg>',
     admin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l2-1.4-2-3.4-2.3.8a7.6 7.6 0 0 0-2.6-1.5L14 2.5h-4l-.5 2.5a7.6 7.6 0 0 0-2.6 1.5l-2.3-.8-2 3.4 2 1.4a7.6 7.6 0 0 0 0 3l-2 1.4 2 3.4 2.3-.8a7.6 7.6 0 0 0 2.6 1.5l.5 2.5h4l.5-2.5a7.6 7.6 0 0 0 2.6-1.5l2.3.8 2-3.4z"/></svg>',
+    rankcount: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v18"/><path d="M15 3v18"/><path d="M4 8h16"/><path d="M4 16h16"/></svg>',
     lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2.2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg>',
     empty: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V7a2 2 0 0 1 2-2h6l2 2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>',
     check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>'
@@ -292,11 +304,20 @@
     { id: "attendance", label: "출석체크", icon: ICONS.attendance },
     { id: "rank", label: "길드 랭크", icon: ICONS.rank },
     { id: "warning", label: "경고 · 주의", icon: ICONS.warning },
+    { id: "rankcount", label: "길랭 횟수", icon: ICONS.rankcount },
     { id: "admin", label: "관리", icon: ICONS.admin }
   ];
 
   /* ---------------- state ---------------- */
   var currentTab = "attendance";
+  var adminSubTab = "members";
+  var ADMIN_SUB_TABS = [
+    { id: "members", label: "길드원 관리" },
+    { id: "attendance", label: "출석체크 관리" },
+    { id: "rank", label: "길드 랭크 기록" },
+    { id: "settings", label: "설정" },
+    { id: "guide", label: "사용 가이드" }
+  ];
   var members = [];
   var settings = {};
   var settingsLoaded = false;
@@ -329,6 +350,13 @@
     var d = new Date(dateKey + "T00:00:00");
     if (isNaN(d)) return dateKey;
     return new Intl.DateTimeFormat("ko-KR", { month: "2-digit", day: "2-digit" }).format(d);
+  }
+  function fmtTimeShort(iso) {
+    var d = new Date(iso);
+    if (!iso || isNaN(d)) return "";
+    var h = String(d.getHours()).padStart(2, "0");
+    var mi = String(d.getMinutes()).padStart(2, "0");
+    return h + "시 " + mi + "분";
   }
   function toast(msg) {
     var root = document.getElementById("toastRoot");
@@ -497,10 +525,7 @@
   /* ---------------- nav ---------------- */
   function buildNav() {
     var notCheckedCount = members.filter(function (m) { return (attendanceToday.checkedIds || []).indexOf(m.id) === -1; }).length;
-    var weeklyMinForBadge = Number(settings.guildRankWeeklyMin || 4);
-    var warnCount = members.filter(function (m) {
-      return !!m.lowActivity || (m.guildRank && guildRankWeeklyCount(m.id) < weeklyMinForBadge);
-    }).length;
+    var warnCount = members.filter(function (m) { return !!m.lowActivity; }).length;
     var badges = { attendance: notCheckedCount, warning: warnCount };
 
     [document.getElementById("tabrail"), document.getElementById("bottombar")].forEach(function (rail) {
@@ -535,6 +560,7 @@
     if (currentTab === "attendance") root.innerHTML = renderAttendance();
     else if (currentTab === "rank") root.innerHTML = renderRank();
     else if (currentTab === "warning") root.innerHTML = renderWarning();
+    else if (currentTab === "rankcount") root.innerHTML = renderRankCount();
     else root.innerHTML = renderAdmin();
     wireTabEvents();
   }
@@ -556,8 +582,12 @@
       }).join("") + "</div>";
     }
 
+    var lastChecked = attendanceToday.lastCheckedAt ? fmtTimeShort(attendanceToday.lastCheckedAt) : "";
+
     return (
-      '<div class="panel-head"><div><h2>출석체크</h2><p>' + fmtDateLong(toDateKey(new Date())) + " 기준</p></div></div>" +
+      '<div class="panel-head"><div><h2>출석체크</h2><p>' + fmtDateLong(toDateKey(new Date())) + " 기준" +
+      (lastChecked ? "(마지막 체크 시각 : " + lastChecked + ")" : "") +
+      "</p></div></div>" +
       '<div class="stats">' +
       statTile(members.length, "전체 길드원", "") +
       statTile(checkedCount, "출석 완료", "positive") +
@@ -631,8 +661,6 @@
     }
 
     var reputeWarn = members.filter(function (m) { return !!m.lowActivity; });
-    var weeklyMin = Number(settings.guildRankWeeklyMin || 4);
-    var rankWarn = members.filter(function (m) { return m.guildRank && guildRankWeeklyCount(m.id) < weeklyMin; });
 
     var reputeBody;
     if (reputeWarn.length === 0) {
@@ -644,20 +672,32 @@
         }).join("") + "</tbody></table></div>";
     }
 
-    var rankBody;
-    if (rankWarn.length === 0) {
-      rankBody = emptyState("경고 대상인 길랭 유저가 없어요", "이번 주 길드 랭크를 " + weeklyMin + "회 미만으로 진행한 길랭 유저가 없어요.", ICONS.check);
+    return (
+      '<div class="panel-head"><div><h2>경고 · 주의</h2><p>관리 탭에서 경고 대상으로 지정된 명성 유저 기준이에요. 길랭 유저의 주간 참여 횟수는 "길랭 횟수" 탭에서 따로 볼 수 있어요.</p></div></div>' +
+      '<div class="section"><h3>명성 유저 경고</h3><p class="hint">관리 탭에서 경고 대상으로 직접 지정한 명성 유저예요.</p>' + reputeBody + "</div>"
+    );
+  }
+
+  /* ---------------- rank count tab ---------------- */
+  function renderRankCount() {
+    var guildRankMembers = members.filter(function (m) { return !!m.guildRank; });
+    var weeklyMin = Number(settings.guildRankWeeklyMin || 4);
+
+    var body;
+    if (guildRankMembers.length === 0) {
+      body = emptyState("등록된 길랭 유저가 없어요", "관리 탭에서 길랭 유저를 먼저 추가해주세요.");
     } else {
-      rankBody = '<div class="table-wrap"><table><thead><tr><th>길드원</th><th>이번 주 길랭 횟수</th></tr></thead><tbody>' +
-        rankWarn.map(function (m) {
-          return "<tr><td>" + escapeHtml(m.name) + "</td><td class=\"mono\" style=\"color:var(--negative)\">" + guildRankWeeklyCount(m.id) + " / " + weeklyMin + "</td></tr>";
+      body = '<div class="table-wrap"><table><thead><tr><th>길드원</th><th>이번 주 길랭 횟수</th></tr></thead><tbody>' +
+        guildRankMembers.map(function (m) {
+          var n = guildRankWeeklyCount(m.id);
+          return "<tr><td>" + escapeHtml(m.name) + '</td><td class="mono">' + n + " / " + weeklyMin + "</td></tr>";
         }).join("") + "</tbody></table></div>";
     }
 
     return (
-      '<div class="panel-head"><div><h2>경고 · 주의</h2><p>명성 유저는 활동 포인트, 길랭 유저는 주간 길드 랭크 참여 횟수 기준이에요.</p></div></div>' +
-      '<div class="section"><h3>명성 유저 경고</h3><p class="hint">관리 탭에서 경고 대상으로 직접 지정한 명성 유저예요.</p>' + reputeBody + "</div>" +
-      '<div class="section"><h3>길랭 유저 경고</h3><p class="hint">이번 주 길드 랭크를 ' + weeklyMin + '회 미만으로 진행한 길랭 유저예요.</p>' + rankBody + "</div>"
+      '<div class="panel-head"><div><h2>길랭 횟수</h2>' +
+      "<p>" + fmtDateLong(toDateKey(new Date())) + " · " + weekOfMonthLabel(new Date()) + " (월~일 기준) · 하루 최대 1회까지 가능해요.</p>" +
+      "</div></div>" + body
     );
   }
 
@@ -767,70 +807,142 @@
       );
     }).join("");
 
+    var subNav = ADMIN_SUB_TABS.map(function (t) {
+      return '<button class="subtabbtn' + (adminSubTab === t.id ? " active" : "") + '" data-role="adminsubtab" data-subtab="' + t.id + '">' + t.label + "</button>";
+    }).join("");
+
+    var subContent = "";
+    if (adminSubTab === "members") {
+      subContent = (
+        '<div class="section">' +
+        "<h3>새 길드원 추가</h3><p class=\"hint\">이름과 유형을 선택해서 추가하세요. 유형은 아래 목록에서 나중에도 바꿀 수 있어요.</p>" +
+        '<div class="row">' +
+        '<input type="text" id="newMemberName" placeholder="새 길드원 이름">' +
+        '<label class="minicheck"><input type="checkbox" id="newMemberRepute">명성 유저</label>' +
+        '<label class="minicheck"><input type="checkbox" id="newMemberGuildRank">길랭 유저</label>' +
+        '<label class="minicheck"><input type="checkbox" id="newMemberManager">관리자</label>' +
+        '<button class="btn" id="addMemberBtn">추가</button>' +
+        "</div>" +
+        "</div>" +
+
+        '<div class="section">' +
+        "<h3>명성 유저</h3><p class=\"hint\">이름 · 활동 포인트는 입력 후 바로 저장돼요. 활동 포인트 경고는 버튼으로 직접 지정하세요.</p>" +
+        (reputeMembersList.length ? '<div class="table-wrap"><table>' + memberTableHead + "<tbody>" + reputeMemberRows + "</tbody></table></div>" : '<p class="hint">등록된 명성 유저가 없어요.</p>') +
+        "</div>" +
+
+        '<div class="section">' +
+        "<h3>길랭 유저</h3><p class=\"hint\">이번 주 참여 현황과 경고 기준은 '설정'에서 확인 · 설정할 수 있어요.</p>" +
+        (guildRankMembersList.length ? '<div class="table-wrap"><table>' + memberTableHeadNoWarn + "<tbody>" + guildRankMemberRows + "</tbody></table></div>" : '<p class="hint">등록된 길랭 유저가 없어요.</p>') +
+        "</div>" +
+
+        '<div class="section">' +
+        "<h3>관리자</h3><p class=\"hint\">활동 포인트나 경고 없이 이름과 삭제만 관리해요.</p>" +
+        (managerMembersList.length ? '<div class="table-wrap"><table>' + memberTableHeadManager + "<tbody>" + managerMemberRows + "</tbody></table></div>" : '<p class="hint">등록된 관리자가 없어요.</p>') +
+        "</div>" +
+
+        (unclassifiedMembersList.length ? (
+          '<div class="section">' +
+          "<h3>유형 미지정 길드원</h3><p class=\"hint\">명성 · 길랭 · 관리자 어느 쪽에도 체크되지 않은 길드원이에요.</p>" +
+          '<div class="table-wrap"><table>' + memberTableHead + "<tbody>" + unclassifiedMemberRows + "</tbody></table></div>" +
+          "</div>"
+        ) : "")
+      );
+    } else if (adminSubTab === "attendance") {
+      subContent = (
+        '<div class="section">' +
+        "<h3>출석체크 처리</h3><p class=\"hint\">날짜를 고르고 출석한 길드원을 눌러 표시하세요.</p>" +
+        '<div class="row" style="margin-bottom:12px"><input type="date" id="adminDatePick" value="' + adminDate + '"></div>' +
+        (members.length ? '<div class="chip-grid">' + attendanceChips + "</div>" : '<p class="hint">등록된 길드원이 없어요.</p>') +
+        "</div>"
+      );
+    } else if (adminSubTab === "rank") {
+      subContent = (
+        '<div class="section">' +
+        "<h3>길드 랭크 기록 추가</h3><p class=\"hint\">길드원, 날짜, 승패 결과를 입력해 기록을 남기세요.</p>" +
+        '<div class="row" style="margin-bottom:12px">' +
+        '<select id="rankMember">' + (memberOptions || "<option value=\"\">길드원 없음</option>") + "</select>" +
+        '<input type="date" id="rankDate" value="' + toDateKey(new Date()) + '">' +
+        '<select id="rankResult"><option value="win">승</option><option value="loss">패</option></select>' +
+        '<button class="btn" id="addRankBtn">기록 추가</button>' +
+        "</div>" +
+        (recentRecords ? '<div class="table-wrap"><table><thead><tr><th>날짜</th><th>길드원</th><th>결과</th><th></th></tr></thead><tbody>' + recentRecords + "</tbody></table></div>" : '<p class="hint">아직 기록이 없어요.</p>') +
+        "</div>"
+      );
+    } else if (adminSubTab === "settings") {
+      subContent = (
+        '<div class="section">' +
+        "<h3>길랭 경고 기준</h3><p class=\"hint\">여기서 정한 숫자가 \"길랭 횟수\" 탭과 아래 현황표의 기준(분모)으로 쓰여요.</p>" +
+        '<div class="row" style="margin-bottom:14px"><input type="number" id="weeklyMinInput" value="' + Number(settings.guildRankWeeklyMin || 4) + '"><span class="hint" style="margin:0">회 / 주</span><button class="btn" id="saveWeeklyMinBtn">저장</button></div>' +
+        (guildRankMembersList.length ? '<div class="table-wrap"><table><thead><tr><th>길드원</th><th>이번 주 길랭 횟수</th></tr></thead><tbody>' + guildRankStatusRows + "</tbody></table></div>" : '<p class="hint">길랭 유저로 지정된 길드원이 없어요.</p>') +
+        "</div>" +
+
+        '<div class="section">' +
+        "<h3>관리자 비밀번호 변경</h3>" +
+        '<div class="row"><input type="password" id="newPwInput" placeholder="새 비밀번호"><button class="btn ghost" id="changePwBtn">변경</button></div>' +
+        "</div>"
+      );
+    } else if (adminSubTab === "guide") {
+      subContent = (
+        '<div class="section">' +
+        "<h3>처음 들어가면</h3>" +
+        '<p class="hint">사이트에 처음 들어가면 "J길드를 위한 내부 전용 페이지이며 외부 유출을 금한다"는 안내 팝업과 저작권 문구(ⓒ 후부리 &amp; J길드)가 떠요. "오늘 하루 보지 않기"를 체크하고 확인을 누르면 그날은 다시 안 뜨고, 체크하지 않으면 다음에 들어올 때 또 떠요. 화면 왼쪽(모바일은 하단)에 출석체크 · 길드 랭크 · 경고·주의 · 길랭 횟수 · 관리, 이렇게 5개의 탭이 있어요.</p>' +
+        "</div>" +
+
+        '<div class="section">' +
+        "<h3>출석체크 탭</h3>" +
+        '<p class="hint">오늘 날짜 기준으로 아직 출석체크를 안 한 길드원 명단이 보여요. 전체 길드원 수, 출석 완료 인원, 미완료 인원이 상단에 숫자로 표시돼요. 상단 날짜 옆에는 오늘 마지막으로 출석체크를 누른 시각도 함께 보여요. 출석 처리 자체는 이 관리 탭의 "출석체크 관리"에서 해요.</p>' +
+        "</div>" +
+
+        '<div class="section">' +
+        "<h3>길드 랭크 탭</h3>" +
+        '<p class="hint">길드 랭크 기록이 있는 길드원들의 전적이 보여요.</p>' +
+        '<ul class="mini-list">' +
+        "<li>각 줄에 최근 7경기 결과가 초록 테두리 \"승\" / 빨강 테두리 \"패\" 도장 모양으로 나오고, 가장 최근 경기가 오른쪽 끝에 와요.</li>" +
+        "<li>맨 오른쪽 승률(%)은 최근 7경기가 아니라 그 길드원의 지금까지 전체 전적을 통틀어 계산돼요.</li>" +
+        "<li>이번 주(월~일 기준) 길드 랭크를 5회 이상 참여한 길드원은 줄 배경이 연한 하늘색, 7회 참여하면 연한 노란색으로 표시돼요.</li>" +
+        "<li>상단에 오늘 날짜와 \"9월 2주차\" 같은 몇 주차인지도 함께 보여요.</li>" +
+        "</ul>" +
+        "</div>" +
+
+        '<div class="section">' +
+        "<h3>경고 · 주의 탭</h3>" +
+        '<p class="hint">이 관리 탭의 "길드원 관리"에서 관리자가 "활동 포인트 경고 지정" 버튼을 눌러 직접 지정한 명성 유저만 여기 떠요. 길랭 유저는 여기 뜨지 않고, 바로 아래 "길랭 횟수" 탭에서 따로 확인해요.</p>' +
+        "</div>" +
+
+        '<div class="section">' +
+        "<h3>길랭 횟수 탭</h3>" +
+        '<p class="hint">길랭 유저들의 이번 주(월~일 기준) 길드 랭크 참여 횟수를 보여주는 탭이에요. 길랭은 하루에 최대 1회만 할 수 있어서 주 중반에는 기준 횟수를 못 채운 상태가 자연스러운 거라, 경고처럼 빨간색으로 표시하지 않고 숫자만 담백하게 보여줘요.</p>' +
+        "</div>" +
+
+        '<div class="section">' +
+        "<h3>관리 탭 (지금 보고 있는 이 탭)</h3>" +
+        '<p class="hint">처음 들어가면 관리자 비밀번호를 한 번 설정해야 하고, 이후에는 매번 비밀번호를 입력해야 들어갈 수 있어요. 아래 5개 카테고리로 나뉘어 있어요.</p>' +
+        '<ul class="mini-list">' +
+        '<li><b>① 길드원 관리</b> — 새 길드원 추가(이름 + 명성 유저 / 길랭 유저 / 관리자 유형 체크, 여러 개 동시 체크 가능), 명성 유저 목록(이름 · 활동 포인트 저장 + 활동 포인트 경고 지정), 길랭 유저 목록(이름 · 활동 포인트 · 유형만 관리, 경고는 자동 계산), 관리자 목록(이름 · 유형만), 유형 미지정 길드원 목록.</li>' +
+        '<li><b>② 출석체크 관리</b> — 날짜를 고르고 출석한 길드원을 하나씩 눌러서 표시해요 (다시 누르면 취소).</li>' +
+        '<li><b>③ 길드 랭크 기록</b> — 길드원, 날짜, 승/패를 선택하고 "기록 추가"를 누르면 랭크 탭과 길랭 횟수 탭에 바로 반영돼요. 잘못 입력한 기록은 목록에서 "삭제"로 지울 수 있어요.</li>' +
+        '<li><b>④ 설정</b> — 길랭 경고 기준(주당 최소 참여 횟수를 입력·저장하면 그 기준으로 길랭 횟수 탭과 아래 참여 현황표에 반영돼요) · 관리자 비밀번호 변경.</li>' +
+        "<li><b>⑤ 사용 가이드</b> — 지금 보고 있는 이 안내예요. 사이트를 떠나지 않고 언제든 다시 확인할 수 있어요.</li>" +
+        "</ul>" +
+        "</div>" +
+
+        '<div class="section">' +
+        "<h3>화면이 이상하게 보일 때</h3>" +
+        '<p class="hint">예전 화면 그대로 보인다면 브라우저 캐시 문제일 가능성이 높아요. 강력 새로고침(Ctrl+Shift+R / Cmd+Shift+R)을 해보세요.</p>' +
+        "</div>" +
+
+        '<div class="section">' +
+        "<h3>아이디어 제안 환영</h3>" +
+        '<p class="hint">업데이트하면 좋을 것 같은 부분이나 추가되면 좋을 것 같은 기능이 있다면 언제든 편하게 말씀해주세요. 사소한 아이디어도 대환영이에요!</p>' +
+        "</div>"
+      );
+    }
+
     return (
       '<div class="panel-head"><div><h2>관리</h2><p>길드원 · 출석 · 랭크 · 활동 포인트를 관리해요.</p></div>' +
       '<button class="btn ghost small" id="logoutBtn">로그아웃</button></div>' +
-
-      '<div class="section">' +
-      "<h3>새 길드원 추가</h3><p class=\"hint\">이름과 유형을 선택해서 추가하세요. 유형은 아래 목록에서 나중에도 바꿀 수 있어요.</p>" +
-      '<div class="row">' +
-      '<input type="text" id="newMemberName" placeholder="새 길드원 이름">' +
-      '<label class="minicheck"><input type="checkbox" id="newMemberRepute">명성 유저</label>' +
-      '<label class="minicheck"><input type="checkbox" id="newMemberGuildRank">길랭 유저</label>' +
-      '<label class="minicheck"><input type="checkbox" id="newMemberManager">관리자</label>' +
-      '<button class="btn" id="addMemberBtn">추가</button>' +
-      "</div>" +
-      "</div>" +
-
-      '<div class="section">' +
-      "<h3>명성 유저</h3><p class=\"hint\">이름 · 활동 포인트는 입력 후 바로 저장돼요. 활동 포인트 경고는 버튼으로 직접 지정하세요.</p>" +
-      (reputeMembersList.length ? '<div class="table-wrap"><table>' + memberTableHead + "<tbody>" + reputeMemberRows + "</tbody></table></div>" : '<p class="hint">등록된 명성 유저가 없어요.</p>') +
-      "</div>" +
-
-      '<div class="section">' +
-      "<h3>길랭 유저</h3><p class=\"hint\">이번 주 참여 현황과 경고 기준은 아래 '길랭 경고 기준'에서 확인 · 설정할 수 있어요.</p>" +
-      (guildRankMembersList.length ? '<div class="table-wrap"><table>' + memberTableHeadNoWarn + "<tbody>" + guildRankMemberRows + "</tbody></table></div>" : '<p class="hint">등록된 길랭 유저가 없어요.</p>') +
-      "</div>" +
-
-      '<div class="section">' +
-      "<h3>관리자</h3><p class=\"hint\">활동 포인트나 경고 없이 이름과 삭제만 관리해요.</p>" +
-      (managerMembersList.length ? '<div class="table-wrap"><table>' + memberTableHeadManager + "<tbody>" + managerMemberRows + "</tbody></table></div>" : '<p class="hint">등록된 관리자가 없어요.</p>') +
-      "</div>" +
-
-      (unclassifiedMembersList.length ? (
-        '<div class="section">' +
-        "<h3>유형 미지정 길드원</h3><p class=\"hint\">명성 · 길랭 · 관리자 어느 쪽에도 체크되지 않은 길드원이에요.</p>" +
-        '<div class="table-wrap"><table>' + memberTableHead + "<tbody>" + unclassifiedMemberRows + "</tbody></table></div>" +
-        "</div>"
-      ) : "") +
-
-      '<div class="section">' +
-      "<h3>길랭 경고 기준</h3><p class=\"hint\">이번 주 길드 랭크 참여 횟수가 이 숫자보다 적은 길랭 유저가 경고 · 주의 탭에 자동으로 표시돼요.</p>" +
-      '<div class="row" style="margin-bottom:14px"><input type="number" id="weeklyMinInput" value="' + Number(settings.guildRankWeeklyMin || 4) + '"><span class="hint" style="margin:0">회 / 주</span><button class="btn" id="saveWeeklyMinBtn">저장</button></div>' +
-      (guildRankMembersList.length ? '<div class="table-wrap"><table><thead><tr><th>길드원</th><th>이번 주 길랭 횟수</th></tr></thead><tbody>' + guildRankStatusRows + "</tbody></table></div>" : '<p class="hint">길랭 유저로 지정된 길드원이 없어요.</p>') +
-      "</div>" +
-
-      '<div class="section">' +
-      "<h3>출석체크 처리</h3><p class=\"hint\">날짜를 고르고 출석한 길드원을 눌러 표시하세요.</p>" +
-      '<div class="row" style="margin-bottom:12px"><input type="date" id="adminDatePick" value="' + adminDate + '"></div>' +
-      (members.length ? '<div class="chip-grid">' + attendanceChips + "</div>" : '<p class="hint">등록된 길드원이 없어요.</p>') +
-      "</div>" +
-
-      '<div class="section">' +
-      "<h3>길드 랭크 기록 추가</h3><p class=\"hint\">길드원, 날짜, 승패 결과를 입력해 기록을 남기세요.</p>" +
-      '<div class="row" style="margin-bottom:12px">' +
-      '<select id="rankMember">' + (memberOptions || "<option value=\"\">길드원 없음</option>") + "</select>" +
-      '<input type="date" id="rankDate" value="' + toDateKey(new Date()) + '">' +
-      '<select id="rankResult"><option value="win">승</option><option value="loss">패</option></select>' +
-      '<button class="btn" id="addRankBtn">기록 추가</button>' +
-      "</div>" +
-      (recentRecords ? '<div class="table-wrap"><table><thead><tr><th>날짜</th><th>길드원</th><th>결과</th><th></th></tr></thead><tbody>' + recentRecords + "</tbody></table></div>" : '<p class="hint">아직 기록이 없어요.</p>') +
-      "</div>" +
-
-      '<div class="section">' +
-      "<h3>관리자 비밀번호 변경</h3>" +
-      '<div class="row"><input type="password" id="newPwInput" placeholder="새 비밀번호"><button class="btn ghost" id="changePwBtn">변경</button></div>' +
-      "</div>"
+      '<div class="adminSubNav">' + subNav + "</div>" +
+      subContent
     );
   }
 
@@ -884,6 +996,10 @@
       try { sessionStorage.removeItem("gn_admin"); } catch (ex) {}
       render();
     };
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-role="adminsubtab"]'), function (btn) {
+      btn.onclick = function () { adminSubTab = btn.getAttribute("data-subtab"); render(); };
+    });
 
     var addMemberBtn = document.getElementById("addMemberBtn");
     if (addMemberBtn) addMemberBtn.onclick = async function () {
@@ -967,7 +1083,7 @@
         var ids = (snap.exists() && snap.data().checkedIds) || [];
         var idx = ids.indexOf(id);
         if (idx === -1) ids = ids.concat([id]); else { ids = ids.slice(); ids.splice(idx, 1); }
-        await setDoc(ref, { checkedIds: ids });
+        await setDoc(ref, { checkedIds: ids, lastCheckedAt: new Date().toISOString() });
       };
     });
 
