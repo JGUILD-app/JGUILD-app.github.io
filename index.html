@@ -51,21 +51,17 @@
   .brand { display: flex; flex-direction: column; line-height: 1.15; }
   .brand-title { font-family: 'Jua', 'Gowun Dodum', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-size: 20px; color: var(--accent); }
   .brand-sub { font-size: 12px; color: var(--ink-faint); }
-  .topbar-date {
-    margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink-soft);
-    background: var(--accent-soft); padding: 6px 12px; border-radius: 999px; white-space: nowrap;
-  }
+  .topbar-right { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .topbar-icons { display: flex; align-items: center; gap: 6px; }
   .topbar-clock {
-    display: none; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft);
-    background: var(--accent-soft); padding: 6px 10px; border-radius: 999px; white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-faint); white-space: nowrap;
   }
   .iconbtn {
-    margin-left: 10px; flex: none; width: 36px; height: 36px; border-radius: 50%;
+    flex: none; width: 36px; height: 36px; border-radius: 50%;
     border: 1.5px solid var(--paper-border); background: var(--paper); color: var(--accent);
     display: flex; align-items: center; justify-content: center; cursor: pointer;
   }
   .iconbtn svg { width: 18px; height: 18px; }
-  #waitlistBtn { margin-left: 22px; }
   .iconbtn:hover { background: var(--accent-soft); }
 
   .layout { flex: 1; display: flex; width: 100%; max-width: 1080px; margin: 0 auto; padding: 20px; gap: 20px; }
@@ -270,8 +266,6 @@
     .stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .stat-tile { padding: 10px 10px; }
     .stat-tile .num { font-size: 21px; }
-    .topbar-date { display: none; }
-    .topbar-clock { display: inline; }
     .brand-sub { display: none; }
     .rank-row { grid-template-columns: 28px 1fr auto auto; gap: 8px; }
     .stamp-row { gap: 2px; }
@@ -291,14 +285,17 @@
       <span class="brand-title">J길드노트</span>
       <span class="brand-sub">우리 길드 랭크 · 경고 기록장</span>
     </div>
-    <span class="topbar-date mono" id="topbarDate">-</span>
-    <span class="topbar-clock mono" id="topbarClock">-</span>
-    <button class="iconbtn" id="megaphoneBtn" type="button" title="활동 불가 안내" aria-label="활동 불가 안내">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a2 2 0 0 0 2 2h1l1 4h2l-1-4h1l10 4V5L9 9H6a2 2 0 0 0-2 2z"/><path d="M19 9.5a3 3 0 0 1 0 5"/></svg>
-    </button>
-    <button class="iconbtn" id="waitlistBtn" type="button" title="대기자 명단" aria-label="대기자 명단">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6"/><circle cx="12" cy="16.3" r="0.9" fill="currentColor" stroke="none"/></svg>
-    </button>
+    <div class="topbar-right">
+      <div class="topbar-icons">
+        <button class="iconbtn" id="megaphoneBtn" type="button" title="활동 불가 안내" aria-label="활동 불가 안내">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a2 2 0 0 0 2 2h1l1 4h2l-1-4h1l10 4V5L9 9H6a2 2 0 0 0-2 2z"/><path d="M19 9.5a3 3 0 0 1 0 5"/></svg>
+        </button>
+        <button class="iconbtn" id="waitlistBtn" type="button" title="대기자 명단" aria-label="대기자 명단">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6"/><circle cx="12" cy="16.3" r="0.9" fill="currentColor" stroke="none"/></svg>
+        </button>
+      </div>
+      <span class="topbar-clock mono" id="topbarClock">-</span>
+    </div>
   </header>
 
   <div class="layout">
@@ -347,12 +344,14 @@
     check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>',
     megaphone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a2 2 0 0 0 2 2h1l1 4h2l-1-4h1l10 4V5L9 9H6a2 2 0 0 0-2 2z"/><path d="M19 9.5a3 3 0 0 1 0 5"/></svg>',
     exclaim: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6"/><circle cx="12" cy="16.3" r="0.9" fill="currentColor" stroke="none"/></svg>',
-    crown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l4 3 5-6.5 5 6.5 4-3-2 9.5H5z"/><path d="M5 18h14"/></svg>'
+    crown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l4 3 5-6.5 5 6.5 4-3-2 9.5H5z"/><path d="M5 18h14"/></svg>',
+    ops: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1z"/><rect x="5" y="6" width="14" height="15" rx="2"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>'
   };
   var TAB_DEFS = [
     { id: "rank", label: "길드 랭크", icon: ICONS.rank },
     { id: "warning", label: "경고 · 주의", icon: ICONS.warning },
     { id: "rankcount", label: "길랭 횟수", icon: ICONS.rankcount },
+    { id: "ops", label: "운영", icon: ICONS.ops },
     { id: "admin", label: "관리", icon: ICONS.admin }
   ];
 
@@ -605,7 +604,6 @@
   // Nav and an initial render happen immediately and unconditionally, so the
   // tabs are always clickable even if Firebase never manages to connect.
   function boot() {
-    document.getElementById("topbarDate").textContent = fmtDateShort(toDateKey(new Date()));
     updateTopbarClock();
     setInterval(updateTopbarClock, 1000);
     window.addEventListener("error", function (e) {
@@ -730,6 +728,7 @@
     if (currentTab === "rank") root.innerHTML = renderRank();
     else if (currentTab === "warning") root.innerHTML = renderWarning();
     else if (currentTab === "rankcount") root.innerHTML = renderRankCount();
+    else if (currentTab === "ops") root.innerHTML = renderOps();
     else root.innerHTML = renderAdmin();
     wireTabEvents();
   }
@@ -819,6 +818,45 @@
         }).join("") + "</tbody></table></div>";
     }
 
+    return (
+      '<div class="panel-head"><div><h2>경고 · 주의</h2>' + headP + '</div></div>' +
+      '<div class="section"><h3>명성 유저 경고</h3><p class="hint">관리 탭에서 경고 대상으로 직접 지정한 명성 유저예요.</p>' + reputeBody + "</div>"
+    );
+  }
+
+  /* ---------------- ops tab (password-gated) ---------------- */
+  function renderOps() {
+    if (!settingsLoaded) return '<div class="empty">불러오는 중...</div>';
+
+    if (!settings.adminPassword) {
+      return (
+        '<div class="lockbox">' + ICONS.lock +
+        "<h2>관리자 비밀번호 설정</h2>" +
+        '<p style="color:var(--ink-soft);font-size:13.5px">아직 관리자 비밀번호가 없어요. 처음 한 번만 설정하면 돼요. (관리 탭과 같은 비밀번호예요)</p>' +
+        '<form id="setupForm">' +
+        '<input type="password" id="setupPw" placeholder="사용할 비밀번호" required>' +
+        '<input type="password" id="setupPw2" placeholder="비밀번호 확인" required>' +
+        '<button class="btn" type="submit">비밀번호 만들기</button>' +
+        '</form><div class="err" id="setupErr"></div>' +
+        "</div>"
+      );
+    }
+
+    if (!isAdmin) {
+      return (
+        '<div class="lockbox">' + ICONS.lock +
+        "<h2>운영 전용</h2>" +
+        '<p style="color:var(--ink-soft);font-size:13.5px">비밀번호를 입력하면 운영 정보를 볼 수 있어요. (관리 탭과 같은 비밀번호예요)</p>' +
+        '<form id="loginForm">' +
+        '<input type="password" id="loginPw" placeholder="비밀번호" required>' +
+        '<button class="btn" type="submit">입장하기</button>' +
+        '</form><div class="err" id="loginErr"></div>' +
+        "</div>"
+      );
+    }
+
+    var opsLastChecked = settings.warningLastUpdatedAt ? fmtTimeShort(settings.warningLastUpdatedAt) : "";
+
     var reportedMembers = members.filter(function (m) { return m.reports && m.reports.length; })
       .slice().sort(function (a, b) { return b.reports.length - a.reports.length; });
     var reportBody;
@@ -858,8 +896,9 @@
     }
 
     return (
-      '<div class="panel-head"><div><h2>경고 · 주의</h2>' + headP + '</div></div>' +
-      '<div class="section"><h3>명성 유저 경고</h3><p class="hint">관리 탭에서 경고 대상으로 직접 지정한 명성 유저예요.</p>' + reputeBody + "</div>" +
+      '<div class="panel-head"><div><h2>운영</h2><p>' + fmtDateLong(toDateKey(new Date())) + " 기준" +
+      (opsLastChecked ? " · 마지막 체크 시각 : " + opsLastChecked : "") + '</p></div>' +
+      '<button class="btn ghost small" id="logoutBtn">로그아웃</button></div>' +
       '<div class="section"><h3>길드원 누적 신고</h3><p class="hint">타 길드에서 들어온 신고 누적 건수예요. 눌러서 펼치면 신고 사유를 볼 수 있어요.</p>' + reportBody + "</div>" +
       '<div class="section"><h3>타 길드 정보</h3><p class="hint">다른 길드 관련 참고 정보예요.</p>' + guildInfoBody + "</div>"
     );
@@ -1067,7 +1106,7 @@
         "</div>" +
 
         '<div class="section">' +
-        "<h3>길드원 신고 등록</h3><p class=\"hint\">타 길드에서 신고가 들어오면 길드원을 선택하고 사유를 적어 등록하세요. \"경고 · 주의\" 탭에는 누적 건수만 보이고, 눌러서 펼쳐야 사유가 보여요.</p>" +
+        "<h3>길드원 신고 등록</h3><p class=\"hint\">타 길드에서 신고가 들어오면 길드원을 선택하고 사유를 적어 등록하세요. \"운영\" 탭(비밀번호 필요)에는 누적 건수만 보이고, 눌러서 펼쳐야 사유가 보여요.</p>" +
         '<div class="row">' +
         '<select id="reportMemberSel">' + (reportMemberOptions || "<option value=\"\">길드원 없음</option>") + "</select>" +
         '<input type="text" id="reportReasonInput" placeholder="신고 사유">' +
@@ -1128,7 +1167,7 @@
     } else if (adminSubTab === "otherguilds") {
       subContent = (
         '<div class="section">' +
-        "<h3>타 길드 정보</h3><p class=\"hint\">길드 이름과 특이사항을 등록하면 \"경고 · 주의\" 탭 아래쪽에 표시돼요. 같은 길드 이름으로 등록하면 한 카드에 묶여서 보여요.</p>" +
+        "<h3>타 길드 정보</h3><p class=\"hint\">길드 이름과 특이사항을 등록하면 \"운영\" 탭(비밀번호 필요)에 표시돼요. 같은 길드 이름으로 등록하면 한 카드에 묶여서 보여요.</p>" +
         '<div class="row" style="margin-bottom:12px">' +
         '<input type="text" id="guildNameInput" placeholder="길드 이름">' +
         '<input type="text" id="guildNoteInput" placeholder="특이사항">' +
@@ -1176,7 +1215,7 @@
       subContent = (
         '<div class="section">' +
         "<h3>처음 들어가면</h3>" +
-        '<p class="hint">사이트에 처음 들어가면 "J길드를 위한 내부 전용 페이지이며 외부 유출을 금한다"는 안내 팝업과 저작권 문구(ⓒ 후부리 &amp; J길드)가 떠요. "오늘 하루 보지 않기"를 체크하고 확인을 누르면 그날은 다시 안 뜨고, 체크하지 않으면 다음에 들어올 때 또 떠요. 화면 왼쪽(모바일은 하단)에 길드 랭크 · 경고·주의 · 길랭 횟수 · 관리, 이렇게 4개의 탭이 있어요. 화면 맨 위 오른쪽의 확성기 · 느낌표 아이콘으로 활동 불가 안내와 대기자 명단을 볼 수 있어요.</p>' +
+        '<p class="hint">사이트에 처음 들어가면 "J길드를 위한 내부 전용 페이지이며 외부 유출을 금한다"는 안내 팝업과 저작권 문구(ⓒ 후부리 &amp; J길드)가 떠요. "오늘 하루 보지 않기"를 체크하고 확인을 누르면 그날은 다시 안 뜨고, 체크하지 않으면 다음에 들어올 때 또 떠요. 화면 왼쪽(모바일은 하단)에 길드 랭크 · 경고·주의 · 길랭 횟수 · 운영 · 관리, 이렇게 5개의 탭이 있어요(운영 · 관리는 비밀번호가 필요해요). 화면 맨 위 오른쪽의 확성기 · 느낌표 아이콘으로 활동 불가 안내와 대기자 명단을 볼 수 있어요.</p>' +
         "</div>" +
 
         '<div class="section">' +
@@ -1203,9 +1242,8 @@
         '<div class="section">' +
         "<h3>경고 · 주의 탭</h3>" +
         '<ul class="mini-list">' +
-        '<li><b>명성 유저 경고</b> — 관리 탭 "길드원 관리"에서 관리자가 직접 경고 대상으로 지정한 명성 유저만 여기 떠요. 활동 포인트와 명성 수치도 함께 보여요.</li>' +
-        '<li><b>길드원 누적 신고</b> — 타 길드에서 들어온 신고 누적 건수예요. 눌러서 펼치면 신고 사유와 날짜가 보여요. 길랭 유저는 여기 뜨지 않고 "길랭 횟수" 탭에서 따로 확인해요.</li>' +
-        '<li><b>타 길드 정보</b> — 다른 길드 관련 참고 정보예요.</li>' +
+        '<li><b>명성 유저 경고</b> — 관리 탭 "길드원 관리"에서 관리자가 직접 경고 대상으로 지정한 명성 유저만 여기 떠요. 활동 포인트와 명성 수치도 함께 보여요. 비밀번호 없이 누구나 볼 수 있어요.</li>' +
+        '<li>길드원 누적 신고와 타 길드 정보는 이제 "운영" 탭(비밀번호 필요)에서 따로 확인해요.</li>' +
         "</ul>" +
         "</div>" +
 
@@ -1215,13 +1253,22 @@
         "</div>" +
 
         '<div class="section">' +
+        "<h3>운영 탭 (비밀번호 필요)</h3>" +
+        '<p class="hint">관리 탭과 같은 비밀번호로 들어가요. 아래 두 가지를 확인할 수 있어요.</p>' +
+        '<ul class="mini-list">' +
+        '<li><b>길드원 누적 신고</b> — 타 길드에서 들어온 신고 누적 건수예요. 눌러서 펼치면 신고 사유와 날짜가 보여요.</li>' +
+        '<li><b>타 길드 정보</b> — 다른 길드 관련 참고 정보예요. 같은 길드 이름으로 여러 번 등록하면 한 카드에 묶여서 보여요.</li>' +
+        "</ul>" +
+        "</div>" +
+
+        '<div class="section">' +
         "<h3>관리 탭 (지금 보고 있는 이 탭)</h3>" +
         '<p class="hint">처음 들어가면 관리자 비밀번호를 한 번 설정해야 하고, 이후에는 매번 비밀번호를 입력해야 들어갈 수 있어요. 아래 7개 카테고리로 나뉘어 있어요.</p>' +
         '<ul class="mini-list">' +
-        '<li><b>① 길드원 관리</b> — 새 길드원 추가, 길드원 신고 등록(길드원 선택 + 사유 입력 → 경고·주의 탭에 누적 건수로 표시, "수정" 버튼을 누르면 그 길드원의 신고 내역을 하나씩 삭제할 수 있어요), 명성 유저 목록(이름 · 활동 포인트 · 명성 저장 + 경고 지정), 길랭 유저 목록(이름 · 활동 포인트 · 명성 · 유형만 관리, 경고는 자동 계산), 관리자 목록(이름 · 유형만), 유형 미지정 길드원 목록.</li>' +
+        '<li><b>① 길드원 관리</b> — 새 길드원 추가, 길드원 신고 등록(길드원 선택 + 사유 입력 → 운영 탭에 누적 건수로 표시, "수정" 버튼을 누르면 그 길드원의 신고 내역을 하나씩 삭제할 수 있어요), 명성 유저 목록(이름 · 활동 포인트 · 명성 저장 + 경고 지정), 길랭 유저 목록(이름 · 활동 포인트 · 명성 · 유형만 관리, 경고는 자동 계산), 관리자 목록(이름 · 유형만), 유형 미지정 길드원 목록.</li>' +
         '<li><b>② 길드 랭크 기록</b> — 길드원, 날짜, 승/패를 선택하고 "기록 추가"를 누르면 랭크 탭과 길랭 횟수 탭에 바로 반영돼요. 잘못 입력한 기록은 목록에서 "삭제"로 지울 수 있어요.</li>' +
         '<li><b>③ 활동 불가 안내</b> — 길드원, 기간, 사유를 입력해 등록하면 상단 확성기 아이콘 목록에 바로 반영돼요.</li>' +
-        '<li><b>④ 타 길드 정보</b> — 길드 이름과 특이사항을 등록하면 경고·주의 탭 아래쪽에 표시돼요. 같은 길드 이름으로 여러 번 등록하면 한 카드에 묶여서 보여요.</li>' +
+        '<li><b>④ 타 길드 정보</b> — 길드 이름과 특이사항을 등록하면 운영 탭(비밀번호 필요)에 표시돼요. 같은 길드 이름으로 여러 번 등록하면 한 카드에 묶여서 보여요.</li>' +
         '<li><b>⑤ 대기자 목록</b> — 길드 가입 대기자와 카드교환 대기자를 각각 이름 · 메모로 등록·관리해요. 등록하면 상단 느낌표 아이콘 목록에 바로 반영돼요.</li>' +
         '<li><b>⑥ 설정</b> — 길랭 경고 기준(주당 최소 참여 횟수를 입력·저장하면 그 기준으로 길랭 횟수 탭과 아래 참여 현황표에 반영돼요) · 관리자 비밀번호 변경.</li>' +
         "<li><b>⑦ 사용 가이드</b> — 지금 보고 있는 이 안내예요. 사이트를 떠나지 않고 언제든 다시 확인할 수 있어요.</li>" +
@@ -1261,8 +1308,8 @@
     var rankDutyBtn = document.getElementById("rankDutyBtn");
     if (rankDutyBtn) rankDutyBtn.onclick = showRankDutyModal;
 
-    if (currentTab !== "admin") return;
-
+    // Shared password-gate wiring: used by both the 관리 tab and the 운영 tab,
+    // since they use the same admin password / isAdmin session flag.
     var setupForm = document.getElementById("setupForm");
     if (setupForm) {
       setupForm.onsubmit = async function (e) {
@@ -1301,6 +1348,8 @@
       try { sessionStorage.removeItem("gn_admin"); } catch (ex) {}
       render();
     };
+
+    if (currentTab !== "admin") return;
 
     Array.prototype.forEach.call(document.querySelectorAll('[data-role="adminsubtab"]'), function (btn) {
       btn.onclick = function () { adminSubTab = btn.getAttribute("data-subtab"); render(); };
