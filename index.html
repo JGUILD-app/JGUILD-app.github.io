@@ -55,6 +55,18 @@
     margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink-soft);
     background: var(--accent-soft); padding: 6px 12px; border-radius: 999px; white-space: nowrap;
   }
+  .topbar-clock {
+    display: none; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft);
+    background: var(--accent-soft); padding: 6px 10px; border-radius: 999px; white-space: nowrap;
+  }
+  .iconbtn {
+    margin-left: 10px; flex: none; width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--paper-border); background: var(--paper); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .iconbtn svg { width: 18px; height: 18px; }
+  #waitlistBtn { margin-left: 22px; }
+  .iconbtn:hover { background: var(--accent-soft); }
 
   .layout { flex: 1; display: flex; width: 100%; max-width: 1080px; margin: 0 auto; padding: 20px; gap: 20px; }
   .tabrail {
@@ -161,6 +173,7 @@
     display: inline-flex; align-items: center; gap: 6px; background: var(--accent); color: var(--accent-ink);
     border: none; border-radius: 10px; padding: 9px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
   }
+  .btn svg { width: 14px; height: 14px; flex: none; }
   .btn:hover { filter: brightness(1.06); }
   .btn.ghost { background: transparent; color: var(--ink-soft); border: 1.5px solid var(--paper-border); }
   .btn.danger { background: var(--negative); }
@@ -196,6 +209,7 @@
 
   .notice-card { max-width: 380px; text-align: left; }
   .notice-title { margin: 0 0 10px; font-size: 18px; color: var(--accent); }
+  .notice-title svg { width: 18px; height: 18px; vertical-align: -3px; margin-right: 2px; }
   .notice-card p { line-height: 1.65; }
   .notice-copyright { font-size: 12px; color: var(--ink-faint) !important; margin-top: -6px !important; }
   .notice-checkbox { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-soft); margin: 16px 0 16px; cursor: pointer; user-select: none; }
@@ -223,6 +237,31 @@
   }
   .subtabbtn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
 
+  .notice-list { display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto; }
+  .notice-item { border: 1px solid var(--paper-border); border-radius: 12px; padding: 10px 12px; text-align: left; }
+  .notice-item .nname { font-weight: 600; color: var(--ink); }
+  .notice-item .nmeta { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+  .notice-item .nreason { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+
+  .report-list { display: flex; flex-direction: column; gap: 8px; }
+  .report-item { border: 1px solid var(--paper-border); border-radius: 12px; padding: 10px 14px; }
+  .report-item summary { cursor: pointer; font-size: 14px; color: var(--ink); list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .report-item summary::-webkit-details-marker { display: none; }
+  .report-item summary .cnt { color: var(--negative); font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 13px; flex: none; }
+  .report-item ul { margin: 10px 0 0; padding-left: 18px; }
+  .report-item li { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
+
+  .guildinfo-card { border: 1px solid var(--paper-border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+  .guildinfo-card:last-child { margin-bottom: 0; }
+  .guildinfo-card .gname { font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+  .guildinfo-card .gnote { font-size: 13px; color: var(--ink-soft); white-space: pre-wrap; }
+  .guildinfo-noterow {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 6px 0; border-top: 1px solid var(--paper-border);
+  }
+  .guildinfo-noterow:first-of-type { border-top: none; padding-top: 2px; }
+  .guildinfo-noterow .gnote { flex: 1; }
+
   @media (max-width: 760px) {
     .tabrail { display: none; }
     .bottombar { display: flex; }
@@ -232,6 +271,7 @@
     .stat-tile { padding: 10px 10px; }
     .stat-tile .num { font-size: 21px; }
     .topbar-date { display: none; }
+    .topbar-clock { display: inline; }
     .brand-sub { display: none; }
     .rank-row { grid-template-columns: 28px 1fr auto auto; gap: 8px; }
     .stamp-row { gap: 2px; }
@@ -249,9 +289,16 @@
     </svg>
     <div class="brand">
       <span class="brand-title">J길드노트</span>
-      <span class="brand-sub">우리 길드 출석 · 랭크 기록장</span>
+      <span class="brand-sub">우리 길드 랭크 · 경고 기록장</span>
     </div>
     <span class="topbar-date mono" id="topbarDate">-</span>
+    <span class="topbar-clock mono" id="topbarClock">-</span>
+    <button class="iconbtn" id="megaphoneBtn" type="button" title="활동 불가 안내" aria-label="활동 불가 안내">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a2 2 0 0 0 2 2h1l1 4h2l-1-4h1l10 4V5L9 9H6a2 2 0 0 0-2 2z"/><path d="M19 9.5a3 3 0 0 1 0 5"/></svg>
+    </button>
+    <button class="iconbtn" id="waitlistBtn" type="button" title="대기자 명단" aria-label="대기자 명단">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6"/><circle cx="12" cy="16.3" r="0.9" fill="currentColor" stroke="none"/></svg>
+    </button>
   </header>
 
   <div class="layout">
@@ -291,17 +338,18 @@
 
   /* ---------------- icons ---------------- */
   var ICONS = {
-    attendance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2.5"/><path d="M9 3.5h6v2.4a1 1 0 0 1-1 1H10a1 1 0 0 1-1-1z" fill="currentColor" stroke="none"/><path d="M8.5 13.5l2.4 2.4L15.7 11"/></svg>',
     rank: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 5H5a1 1 0 0 0-1 1c0 2.2 1.6 4 3.6 4.3"/><path d="M16 5h3a1 1 0 0 1 1 1c0 2.2-1.6 4-3.6 4.3"/><path d="M12 13v3"/><path d="M9 20h6"/><path d="M9.5 20c0-1.7.9-2.6 2.5-2.6s2.5.9 2.5 2.6"/></svg>',
     warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 21.5 20h-19z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.3" r="0.9" fill="currentColor" stroke="none"/></svg>',
     admin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l2-1.4-2-3.4-2.3.8a7.6 7.6 0 0 0-2.6-1.5L14 2.5h-4l-.5 2.5a7.6 7.6 0 0 0-2.6 1.5l-2.3-.8-2 3.4 2 1.4a7.6 7.6 0 0 0 0 3l-2 1.4 2 3.4 2.3-.8a7.6 7.6 0 0 0 2.6 1.5l.5 2.5h4l.5-2.5a7.6 7.6 0 0 0 2.6-1.5l2.3.8 2-3.4z"/></svg>',
     rankcount: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v18"/><path d="M15 3v18"/><path d="M4 8h16"/><path d="M4 16h16"/></svg>',
     lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2.2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg>',
     empty: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V7a2 2 0 0 1 2-2h6l2 2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>',
-    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>'
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>',
+    megaphone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a2 2 0 0 0 2 2h1l1 4h2l-1-4h1l10 4V5L9 9H6a2 2 0 0 0-2 2z"/><path d="M19 9.5a3 3 0 0 1 0 5"/></svg>',
+    exclaim: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6"/><circle cx="12" cy="16.3" r="0.9" fill="currentColor" stroke="none"/></svg>',
+    crown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l4 3 5-6.5 5 6.5 4-3-2 9.5H5z"/><path d="M5 18h14"/></svg>'
   };
   var TAB_DEFS = [
-    { id: "attendance", label: "출석체크", icon: ICONS.attendance },
     { id: "rank", label: "길드 랭크", icon: ICONS.rank },
     { id: "warning", label: "경고 · 주의", icon: ICONS.warning },
     { id: "rankcount", label: "길랭 횟수", icon: ICONS.rankcount },
@@ -309,24 +357,26 @@
   ];
 
   /* ---------------- state ---------------- */
-  var currentTab = "attendance";
+  var currentTab = "rank";
   var adminSubTab = "members";
   var ADMIN_SUB_TABS = [
     { id: "members", label: "길드원 관리" },
-    { id: "attendance", label: "출석체크 관리" },
     { id: "rank", label: "길드 랭크 기록" },
+    { id: "inactivity", label: "활동 불가 안내" },
+    { id: "otherguilds", label: "타 길드 정보" },
+    { id: "waitlist", label: "대기자 목록" },
     { id: "settings", label: "설정" },
     { id: "guide", label: "사용 가이드" }
   ];
   var members = [];
   var settings = {};
   var settingsLoaded = false;
-  var attendanceToday = { checkedIds: [] };
   var rankRecords = [];
+  var inactivityNotices = [];
+  var otherGuilds = [];
+  var waitlist = [];
   var isAdmin = false;
-  var adminDate = toDateKey(new Date());
-  var adminAttendanceDoc = { checkedIds: [] };
-  var adminUnsubAttendance = null;
+  var reportEditMemberId = null;
 
   try { isAdmin = sessionStorage.getItem("gn_admin") === "1"; } catch (e) {}
 
@@ -357,6 +407,17 @@
     var h = String(d.getHours()).padStart(2, "0");
     var mi = String(d.getMinutes()).padStart(2, "0");
     return h + "시 " + mi + "분";
+  }
+  function updateTopbarClock() {
+    var el = document.getElementById("topbarClock");
+    if (!el) return;
+    var d = new Date();
+    var mm = String(d.getMonth() + 1).padStart(2, "0");
+    var dd = String(d.getDate()).padStart(2, "0");
+    var hh = String(d.getHours()).padStart(2, "0");
+    var mi = String(d.getMinutes()).padStart(2, "0");
+    var ss = String(d.getSeconds()).padStart(2, "0");
+    el.textContent = mm + "." + dd + " " + hh + ":" + mi + ":" + ss;
   }
   function toast(msg) {
     var root = document.getElementById("toastRoot");
@@ -417,7 +478,7 @@
     root.innerHTML =
       '<div class="modal-back"><div class="modal-card notice-card">' +
       '<h3 class="notice-title">🔒 J길드 내부 공지</h3>' +
-      "<p>본 사이트는 J길드를 위한 내부 전용 페이지입니다.<br>게재된 모든 정보(길드원 명단, 출석·랭크 기록 등)의 외부 유출 및 무단 공유를 금합니다.</p>" +
+      "<p>본 사이트는 J길드를 위한 내부 전용 페이지입니다.<br>게재된 모든 정보(길드원 명단, 랭크 · 경고 기록 등)의 외부 유출 및 무단 공유를 금합니다.</p>" +
       '<p class="notice-copyright">ⓒ 후부리 &amp; J길드. All rights reserved.</p>' +
       '<label class="notice-checkbox"><input type="checkbox" id="noticeHideToday"><span>오늘 하루 보지 않기</span></label>' +
       '<div class="modal-actions"><button class="btn" data-act="noticeClose">확인</button></div>' +
@@ -434,17 +495,129 @@
     });
   }
 
+  /* ---------------- inactivity notice modal ---------------- */
+  function showInactivityModal() {
+    var root = document.getElementById("modalRoot");
+    var body;
+    if (!inactivityNotices.length) {
+      body = '<p style="margin:0 0 16px;color:var(--ink-soft);font-size:13.5px">현재 등록된 활동 불가 안내가 없어요.</p>';
+    } else {
+      body = '<div class="notice-list">' + inactivityNotices.map(function (n) {
+        return (
+          '<div class="notice-item"><div class="nname">' + escapeHtml(n.memberName || "") + "</div>" +
+          '<div class="nmeta">' + escapeHtml(n.period || "") + "</div>" +
+          '<div class="nreason">' + escapeHtml(n.reason || "") + "</div></div>"
+        );
+      }).join("") + "</div>";
+    }
+    root.innerHTML =
+      '<div class="modal-back"><div class="modal-card">' +
+      '<h3 class="notice-title">' + ICONS.megaphone + ' 활동 불가 안내</h3>' +
+      body +
+      '<div class="modal-actions"><button class="btn ghost" data-act="inactiveClose">닫기</button></div>' +
+      "</div></div>";
+    var closeIt = function () { root.innerHTML = ""; };
+    root.querySelector('[data-act="inactiveClose"]').onclick = closeIt;
+    root.querySelector(".modal-back").addEventListener("click", function (e) {
+      if (e.target.classList.contains("modal-back")) closeIt();
+    });
+  }
+
+  /* ---------------- waitlist modal ---------------- */
+  function showWaitlistModal() {
+    var root = document.getElementById("modalRoot");
+    function section(title, list) {
+      var body;
+      if (!list.length) {
+        body = '<p style="margin:0 0 6px;color:var(--ink-soft);font-size:13px">등록된 대기자가 없어요.</p>';
+      } else {
+        body = '<div class="notice-list" style="max-height:22vh">' + list.map(function (w) {
+          return (
+            '<div class="notice-item"><div class="nname">' + escapeHtml(w.name || "") + "</div>" +
+            (w.note ? '<div class="nmeta">' + escapeHtml(w.note) + "</div>" : "") +
+            "</div>"
+          );
+        }).join("") + "</div>";
+      }
+      return '<div style="margin-bottom:16px"><h3 style="font-size:14px;margin:0 0 8px;color:var(--ink)">' + title + "</h3>" + body + "</div>";
+    }
+    var joinList = waitlist.filter(function (w) { return w.type === "join"; });
+    var cardList = waitlist.filter(function (w) { return w.type === "card"; });
+    root.innerHTML =
+      '<div class="modal-back"><div class="modal-card">' +
+      '<h3 class="notice-title">' + ICONS.exclaim + ' 대기자 명단</h3>' +
+      section("길드 가입 대기자", joinList) +
+      section("카드교환 대기자", cardList) +
+      '<div class="modal-actions"><button class="btn ghost" data-act="waitlistClose">닫기</button></div>' +
+      "</div></div>";
+    var closeIt = function () { root.innerHTML = ""; };
+    root.querySelector('[data-act="waitlistClose"]').onclick = closeIt;
+    root.querySelector(".modal-back").addEventListener("click", function (e) {
+      if (e.target.classList.contains("modal-back")) closeIt();
+    });
+  }
+
+  /* ---------------- rank duty modal ---------------- */
+  var RANK_DUTY_DAYS = [
+    { key: "dutyMon", label: "월" },
+    { key: "dutyTue", label: "화" },
+    { key: "dutyWed", label: "수" },
+    { key: "dutyThu", label: "목" },
+    { key: "dutyFri", label: "금" },
+    { key: "dutySat", label: "토" },
+    { key: "dutySun", label: "일" }
+  ];
+  function showRankDutyModal() {
+    var root = document.getElementById("modalRoot");
+    var rowsHtml = RANK_DUTY_DAYS.map(function (d) {
+      return (
+        '<div class="row" style="flex-wrap:nowrap;margin-bottom:8px">' +
+        '<span style="width:20px;flex:none;font-weight:600;color:var(--ink)">' + d.label + "</span>" +
+        '<input type="text" id="' + d.key + 'Input" value="' + escapeHtml(settings[d.key] || "") + '" placeholder="닉네임" style="flex:1;min-width:0">' +
+        "</div>"
+      );
+    }).join("");
+    root.innerHTML =
+      '<div class="modal-back"><div class="modal-card">' +
+      '<h3 class="notice-title">' + ICONS.crown + ' 일별 길드 랭크 운영진</h3>' +
+      '<p style="margin:0 0 14px;color:var(--ink-soft);font-size:12.5px">요일별 길드 랭크 담당자를 적어두는 칸이에요. 관리자 비밀번호 없이 바로 수정할 수 있어요.</p>' +
+      rowsHtml +
+      '<div class="modal-actions" style="margin-top:6px"><button class="btn ghost" data-act="dutyClose">닫기</button><button class="btn" data-act="dutySave">저장</button></div>' +
+      "</div></div>";
+    var closeIt = function () { root.innerHTML = ""; };
+    root.querySelector('[data-act="dutyClose"]').onclick = closeIt;
+    root.querySelector('[data-act="dutySave"]').onclick = async function () {
+      if (!db) { toast("연결 후 다시 시도해주세요"); return; }
+      var payload = {};
+      RANK_DUTY_DAYS.forEach(function (d) {
+        payload[d.key] = document.getElementById(d.key + "Input").value.trim();
+      });
+      await updateDoc(doc(db, "config", "settings"), payload);
+      toast("저장했어요");
+      closeIt();
+    };
+    root.querySelector(".modal-back").addEventListener("click", function (e) {
+      if (e.target.classList.contains("modal-back")) closeIt();
+    });
+  }
+
   /* ---------------- boot ---------------- */
   // Nav and an initial render happen immediately and unconditionally, so the
   // tabs are always clickable even if Firebase never manages to connect.
   function boot() {
     document.getElementById("topbarDate").textContent = fmtDateShort(toDateKey(new Date()));
+    updateTopbarClock();
+    setInterval(updateTopbarClock, 1000);
     window.addEventListener("error", function (e) {
       reportFatal(e && e.message ? e.message : "알 수 없는 오류");
     });
     window.addEventListener("unhandledrejection", function (e) {
       reportFatal(e && e.reason && e.reason.message ? e.reason.message : String(e.reason || "알 수 없는 오류"));
     });
+    var megaphoneBtn = document.getElementById("megaphoneBtn");
+    if (megaphoneBtn) megaphoneBtn.onclick = showInactivityModal;
+    var waitlistBtn = document.getElementById("waitlistBtn");
+    if (waitlistBtn) waitlistBtn.onclick = showWaitlistModal;
     buildNav();
     render();
     connectFirebase();
@@ -499,34 +672,31 @@
       render();
     }, function (e) { reportFatal(e.message || String(e)); });
 
-    var todayKey = toDateKey(new Date());
-    onSnapshot(doc(db, "attendance", todayKey), function (snap) {
-      attendanceToday = snap.exists() ? (snap.data() || { checkedIds: [] }) : { checkedIds: [] };
-      render();
-    }, function (e) { reportFatal(e.message || String(e)); });
-
     onSnapshot(query(collection(db, "rankRecords"), orderBy("date", "desc"), limit(500)), function (qs) {
       rankRecords = qs.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
       render();
     }, function (e) { reportFatal(e.message || String(e)); });
 
-    watchAdminAttendance();
-  }
+    onSnapshot(query(collection(db, "inactivityNotices"), orderBy("createdAt", "desc")), function (qs) {
+      inactivityNotices = qs.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+      render();
+    }, function (e) { reportFatal(e.message || String(e)); });
 
-  function watchAdminAttendance() {
-    if (adminUnsubAttendance) { adminUnsubAttendance(); adminUnsubAttendance = null; }
-    if (!db) return;
-    adminUnsubAttendance = onSnapshot(doc(db, "attendance", adminDate), function (snap) {
-      adminAttendanceDoc = snap.exists() ? (snap.data() || { checkedIds: [] }) : { checkedIds: [] };
-      if (currentTab === "admin") render();
-    }, function () {});
+    onSnapshot(query(collection(db, "otherGuilds"), orderBy("updatedAt", "desc")), function (qs) {
+      otherGuilds = qs.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+      render();
+    }, function (e) { reportFatal(e.message || String(e)); });
+
+    onSnapshot(query(collection(db, "waitlist"), orderBy("createdAt", "desc")), function (qs) {
+      waitlist = qs.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+      render();
+    }, function (e) { reportFatal(e.message || String(e)); });
   }
 
   /* ---------------- nav ---------------- */
   function buildNav() {
-    var notCheckedCount = members.filter(function (m) { return (attendanceToday.checkedIds || []).indexOf(m.id) === -1; }).length;
     var warnCount = members.filter(function (m) { return !!m.lowActivity; }).length;
-    var badges = { attendance: notCheckedCount, warning: warnCount };
+    var badges = { warning: warnCount };
 
     [document.getElementById("tabrail"), document.getElementById("bottombar")].forEach(function (rail) {
       rail.innerHTML = TAB_DEFS.map(function (t) {
@@ -557,43 +727,11 @@
       if (retryBtn) retryBtn.onclick = function () { dbError = null; dbReady = false; render(); connectFirebase(); };
       return;
     }
-    if (currentTab === "attendance") root.innerHTML = renderAttendance();
-    else if (currentTab === "rank") root.innerHTML = renderRank();
+    if (currentTab === "rank") root.innerHTML = renderRank();
     else if (currentTab === "warning") root.innerHTML = renderWarning();
     else if (currentTab === "rankcount") root.innerHTML = renderRankCount();
     else root.innerHTML = renderAdmin();
     wireTabEvents();
-  }
-
-  /* ---------------- attendance tab ---------------- */
-  function renderAttendance() {
-    var checked = attendanceToday.checkedIds || [];
-    var notChecked = members.filter(function (m) { return checked.indexOf(m.id) === -1; });
-    var checkedCount = members.length - notChecked.length;
-
-    var body;
-    if (members.length === 0) {
-      body = emptyState("아직 등록된 길드원이 없어요", "관리 탭에서 길드원을 먼저 추가해주세요.");
-    } else if (notChecked.length === 0) {
-      body = emptyState("오늘은 모두 출석했어요", "길드원 전원이 출석체크를 완료했습니다.", ICONS.check);
-    } else {
-      body = '<div class="chip-grid">' + notChecked.map(function (m) {
-        return '<div class="chip"><span class="avatar">' + escapeHtml(initials(m.name)) + '</span><span class="name">' + escapeHtml(m.name) + '</span><span class="tag">미출석</span></div>';
-      }).join("") + "</div>";
-    }
-
-    var lastChecked = attendanceToday.lastCheckedAt ? fmtTimeShort(attendanceToday.lastCheckedAt) : "";
-
-    return (
-      '<div class="panel-head"><div><h2>출석체크</h2><p>' + fmtDateLong(toDateKey(new Date())) + " 기준" +
-      (lastChecked ? "(마지막 체크 시각 : " + lastChecked + ")" : "") +
-      "</p></div></div>" +
-      '<div class="stats">' +
-      statTile(members.length, "전체 길드원", "") +
-      statTile(checkedCount, "출석 완료", "positive") +
-      statTile(notChecked.length, "출석 미완료", "negative") +
-      "</div>" + body
-    );
   }
 
   /* ---------------- rank tab ---------------- */
@@ -640,11 +778,16 @@
       }).join("") + "</div>";
     }
 
+    var rankLastChecked = settings.rankLastUpdatedAt ? fmtTimeShort(settings.rankLastUpdatedAt) : "";
+
     return (
       '<div class="panel-head"><div><h2>길드 랭크</h2>' +
-      "<p>" + fmtDateLong(toDateKey(new Date())) + " · " + weekOfMonthLabel(new Date()) + " (월~일 기준)</p>" +
+      "<p>" + fmtDateLong(toDateKey(new Date())) + " · " + weekOfMonthLabel(new Date()) + " (월~일 기준)" +
+      (rankLastChecked ? " · 마지막 체크 시각 : " + rankLastChecked : "") + "</p>" +
       '<div class="rank-legend"><span><i class="sky"></i>이번 주 5회 이상 참여</span><span><i class="gold"></i>이번 주 7회 참여</span></div>' +
-      "</div></div>" +
+      "</div>" +
+      '<button class="btn ghost small" id="rankDutyBtn" type="button">' + ICONS.crown + " 담당자</button>" +
+      "</div>" +
       '<div class="stats">' +
       statTile(list.length, "참여 인원", "") +
       statTile(totalWins + "승 " + totalLosses + "패", "전체 전적", "") +
@@ -655,26 +798,70 @@
 
   /* ---------------- warning tab ---------------- */
   function renderWarning() {
+    var warnLastChecked = settings.warningLastUpdatedAt ? fmtTimeShort(settings.warningLastUpdatedAt) : "";
+    var headP = '<p>' + fmtDateLong(toDateKey(new Date())) +
+      ' 기준' + (warnLastChecked ? " · 마지막 체크 시각 : " + warnLastChecked : "") +
+      ' · 관리 탭에서 경고 대상으로 지정된 명성 유저 기준이에요. 길랭 유저의 주간 참여 횟수는 "길랭 횟수" 탭에서 따로 볼 수 있어요.</p>';
+
     if (members.length === 0) {
-      return '<div class="panel-head"><div><h2>경고 · 주의</h2></div></div>' +
+      return '<div class="panel-head"><div><h2>경고 · 주의</h2>' + headP + '</div></div>' +
         emptyState("아직 등록된 길드원이 없어요", "관리 탭에서 길드원을 먼저 추가해주세요.");
     }
 
     var reputeWarn = members.filter(function (m) { return !!m.lowActivity; });
-
     var reputeBody;
     if (reputeWarn.length === 0) {
       reputeBody = emptyState("경고 대상인 명성 유저가 없어요", "관리 탭에서 경고 대상으로 지정된 명성 유저가 없어요.", ICONS.check);
     } else {
-      reputeBody = '<div class="table-wrap"><table><thead><tr><th>길드원</th><th>활동 포인트</th></tr></thead><tbody>' +
+      reputeBody = '<div class="table-wrap"><table><thead><tr><th>길드원</th><th>활동 포인트</th><th>명성</th></tr></thead><tbody>' +
         reputeWarn.map(function (m) {
-          return "<tr><td>" + escapeHtml(m.name) + "</td><td class=\"mono\" style=\"color:var(--negative)\">" + Number(m.points || 0) + "</td></tr>";
+          return "<tr><td>" + escapeHtml(m.name) + "</td><td class=\"mono\" style=\"color:var(--negative)\">" + Number(m.points || 0) + "</td><td class=\"mono\">" + Number(m.reputation || 0) + "</td></tr>";
         }).join("") + "</tbody></table></div>";
     }
 
+    var reportedMembers = members.filter(function (m) { return m.reports && m.reports.length; })
+      .slice().sort(function (a, b) { return b.reports.length - a.reports.length; });
+    var reportBody;
+    if (reportedMembers.length === 0) {
+      reportBody = emptyState("누적 신고가 있는 길드원이 없어요", "타 길드에서 신고가 들어오면 관리 탭에서 등록할 수 있어요.", ICONS.check);
+    } else {
+      reportBody = '<div class="report-list">' + reportedMembers.map(function (m) {
+        var items = m.reports.slice().reverse().map(function (r) {
+          return "<li>" + escapeHtml(r.date || "") + " · " + escapeHtml(r.reason || "") + "</li>";
+        }).join("");
+        return (
+          '<details class="report-item"><summary>' + escapeHtml(m.name) +
+          '<span class="cnt">누적 ' + m.reports.length + '건</span></summary>' +
+          "<ul>" + items + "</ul></details>"
+        );
+      }).join("") + "</div>";
+    }
+
+    var guildInfoBody;
+    if (otherGuilds.length === 0) {
+      guildInfoBody = emptyState("등록된 타 길드 정보가 없어요", "관리 탭 \"타 길드 정보\"에서 추가할 수 있어요.");
+    } else {
+      var guildInfoGroups = {};
+      var guildInfoOrder = [];
+      otherGuilds.forEach(function (g) {
+        var key = g.guildName || "(이름없음)";
+        if (!guildInfoGroups[key]) { guildInfoGroups[key] = []; guildInfoOrder.push(key); }
+        if (g.note) guildInfoGroups[key].push(g.note);
+      });
+      guildInfoBody = guildInfoOrder.map(function (name) {
+        var notes = guildInfoGroups[name];
+        var noteHtml = notes.length
+          ? '<ul class="mini-list">' + notes.map(function (n) { return "<li>" + escapeHtml(n) + "</li>"; }).join("") + "</ul>"
+          : '<div class="gnote">특이사항 없음</div>';
+        return '<div class="guildinfo-card"><div class="gname">' + escapeHtml(name) + "</div>" + noteHtml + "</div>";
+      }).join("");
+    }
+
     return (
-      '<div class="panel-head"><div><h2>경고 · 주의</h2><p>관리 탭에서 경고 대상으로 지정된 명성 유저 기준이에요. 길랭 유저의 주간 참여 횟수는 "길랭 횟수" 탭에서 따로 볼 수 있어요.</p></div></div>' +
-      '<div class="section"><h3>명성 유저 경고</h3><p class="hint">관리 탭에서 경고 대상으로 직접 지정한 명성 유저예요.</p>' + reputeBody + "</div>"
+      '<div class="panel-head"><div><h2>경고 · 주의</h2>' + headP + '</div></div>' +
+      '<div class="section"><h3>명성 유저 경고</h3><p class="hint">관리 탭에서 경고 대상으로 직접 지정한 명성 유저예요.</p>' + reputeBody + "</div>" +
+      '<div class="section"><h3>길드원 누적 신고</h3><p class="hint">타 길드에서 들어온 신고 누적 건수예요. 눌러서 펼치면 신고 사유를 볼 수 있어요.</p>' + reportBody + "</div>" +
+      '<div class="section"><h3>타 길드 정보</h3><p class="hint">다른 길드 관련 참고 정보예요.</p>' + guildInfoBody + "</div>"
     );
   }
 
@@ -694,9 +881,12 @@
         }).join("") + "</tbody></table></div>";
     }
 
+    var rcLastChecked = settings.rankLastUpdatedAt ? fmtTimeShort(settings.rankLastUpdatedAt) : "";
+
     return (
       '<div class="panel-head"><div><h2>길랭 횟수</h2>' +
-      "<p>" + fmtDateLong(toDateKey(new Date())) + " · " + weekOfMonthLabel(new Date()) + " (월~일 기준) · 하루 최대 1회까지 가능해요.</p>" +
+      "<p>" + fmtDateLong(toDateKey(new Date())) + " · " + weekOfMonthLabel(new Date()) + " (월~일 기준) · 하루 최대 1회까지 가능해요." +
+      (rcLastChecked ? " · 마지막 체크 시각 : " + rcLastChecked : "") + "</p>" +
       "</div></div>" + body
     );
   }
@@ -733,7 +923,6 @@
       );
     }
 
-    var checked = adminAttendanceDoc.checkedIds || [];
     function typeCheckboxes(m) {
       return (
         '<td class="typecell">' +
@@ -748,6 +937,7 @@
         "<tr>" +
         '<td><input type="text" value="' + escapeHtml(m.name) + '" data-role="mname" data-id="' + m.id + '"></td>' +
         '<td><input type="number" value="' + Number(m.points || 0) + '" data-role="mpoints" data-id="' + m.id + '"></td>' +
+        '<td><input type="number" value="' + Number(m.reputation || 0) + '" data-role="mreputation" data-id="' + m.id + '"></td>' +
         typeCheckboxes(m) +
         '<td><button class="btn small ' + (m.lowActivity ? "danger" : "ghost") + '" data-role="mlowtoggle" data-id="' + m.id + '">' + (m.lowActivity ? "활동 포인트 경고 중" : "활동 포인트 경고 지정") + "</button></td>" +
         '<td><button class="btn danger small" data-role="mdelete" data-id="' + m.id + '">삭제</button></td>' +
@@ -759,6 +949,7 @@
         "<tr>" +
         '<td><input type="text" value="' + escapeHtml(m.name) + '" data-role="mname" data-id="' + m.id + '"></td>' +
         '<td><input type="number" value="' + Number(m.points || 0) + '" data-role="mpoints" data-id="' + m.id + '"></td>' +
+        '<td><input type="number" value="' + Number(m.reputation || 0) + '" data-role="mreputation" data-id="' + m.id + '"></td>' +
         typeCheckboxes(m) +
         '<td><button class="btn danger small" data-role="mdelete" data-id="' + m.id + '">삭제</button></td>' +
         "</tr>"
@@ -773,8 +964,8 @@
         "</tr>"
       );
     }
-    var memberTableHead = "<thead><tr><th>이름</th><th>활동 포인트</th><th>유형</th><th>활동 포인트 경고</th><th></th></tr></thead>";
-    var memberTableHeadNoWarn = "<thead><tr><th>이름</th><th>활동 포인트</th><th>유형</th><th></th></tr></thead>";
+    var memberTableHead = "<thead><tr><th>이름</th><th>활동 포인트</th><th>명성</th><th>유형</th><th>활동 포인트 경고</th><th></th></tr></thead>";
+    var memberTableHeadNoWarn = "<thead><tr><th>이름</th><th>활동 포인트</th><th>명성</th><th>유형</th><th></th></tr></thead>";
     var memberTableHeadManager = "<thead><tr><th>이름</th><th>유형</th><th></th></tr></thead>";
     var reputeMembersList = members.filter(function (m) { return !!m.repute; });
     var guildRankMembersList = members.filter(function (m) { return !!m.guildRank; });
@@ -785,12 +976,9 @@
     var managerMemberRows = managerMembersList.map(memberRowHtmlManager).join("");
     var unclassifiedMemberRows = unclassifiedMembersList.map(memberRowHtml).join("");
 
-    var attendanceChips = members.map(function (m) {
-      var on = checked.indexOf(m.id) !== -1;
-      return '<div class="toggle-chip' + (on ? " on" : "") + '" data-role="toggleatt" data-id="' + m.id + '"><span class="dotstate"></span><span>' + escapeHtml(m.name) + "</span></div>";
-    }).join("");
-
     var memberOptions = members.map(function (m) { return '<option value="' + m.id + '">' + escapeHtml(m.name) + "</option>"; }).join("");
+    var reportableMembersList = members.slice().sort(function (a, b) { return (a.name || "").localeCompare(b.name || "", "ko"); });
+    var reportMemberOptions = reportableMembersList.map(function (m) { return '<option value="' + m.id + '">' + escapeHtml(m.name) + " (누적 " + ((m.reports && m.reports.length) || 0) + "건)</option>"; }).join("");
 
     var weeklyMinNow = Number(settings.guildRankWeeklyMin || 4);
     var guildRankStatusRows = guildRankMembersList.map(function (m) {
@@ -806,6 +994,59 @@
         '<td><button class="btn ghost small" data-role="rdelete" data-id="' + r.id + '">삭제</button></td></tr>'
       );
     }).join("");
+
+    var inactivityRows = inactivityNotices.map(function (n) {
+      return (
+        "<tr><td>" + escapeHtml(n.memberName || "") + "</td><td>" + escapeHtml(n.period || "") + "</td><td>" + escapeHtml(n.reason || "") + "</td>" +
+        '<td><button class="btn ghost small" data-role="inactivedelete" data-id="' + n.id + '">삭제</button></td></tr>'
+      );
+    }).join("");
+
+    var otherGuildGroups = {};
+    var otherGuildOrder = [];
+    otherGuilds.forEach(function (g) {
+      var key = g.guildName || "(이름없음)";
+      if (!otherGuildGroups[key]) { otherGuildGroups[key] = []; otherGuildOrder.push(key); }
+      otherGuildGroups[key].push(g);
+    });
+    var otherGuildCards = otherGuildOrder.map(function (name) {
+      var rows = otherGuildGroups[name].map(function (g) {
+        return (
+          '<div class="guildinfo-noterow"><span class="gnote">' + escapeHtml(g.note || "특이사항 없음") + "</span>" +
+          '<button class="btn ghost small" data-role="guildinfodelete" data-id="' + g.id + '">삭제</button></div>'
+        );
+      }).join("");
+      return '<div class="guildinfo-card"><div class="gname">' + escapeHtml(name) + "</div>" + rows + "</div>";
+    }).join("");
+
+    var joinWaitlist = waitlist.filter(function (w) { return w.type === "join"; });
+    var cardWaitlist = waitlist.filter(function (w) { return w.type === "card"; });
+    function waitlistRows(list) {
+      return list.map(function (w) {
+        return (
+          "<tr><td>" + escapeHtml(w.name || "") + "</td><td>" + escapeHtml(w.note || "") + "</td>" +
+          '<td><button class="btn ghost small" data-role="waitlistdelete" data-id="' + w.id + '">삭제</button></td></tr>'
+        );
+      }).join("");
+    }
+
+    var reportEditMember = reportEditMemberId ? memberById(reportEditMemberId) : null;
+    var reportEditBox = "";
+    if (reportEditMember) {
+      var reportEditRows = (reportEditMember.reports || []).map(function (r, i) { return { r: r, idx: i }; })
+        .slice().reverse().map(function (item) {
+          return (
+            "<tr><td>" + escapeHtml(item.r.date || "") + "</td><td>" + escapeHtml(item.r.reason || "") + "</td>" +
+            '<td><button class="btn danger small" data-role="reportdelete" data-id="' + reportEditMember.id + '" data-idx="' + item.idx + '">삭제</button></td></tr>'
+          );
+        }).join("");
+      reportEditBox = (
+        '<div class="section">' +
+        "<h3>" + escapeHtml(reportEditMember.name) + " 님의 신고 내역 수정</h3>" +
+        (reportEditRows ? '<div class="table-wrap"><table><thead><tr><th>날짜</th><th>사유</th><th></th></tr></thead><tbody>' + reportEditRows + "</tbody></table></div>" : '<p class="hint">등록된 신고가 없어요.</p>') +
+        "</div>"
+      );
+    }
 
     var subNav = ADMIN_SUB_TABS.map(function (t) {
       return '<button class="subtabbtn' + (adminSubTab === t.id ? " active" : "") + '" data-role="adminsubtab" data-subtab="' + t.id + '">' + t.label + "</button>";
@@ -826,12 +1067,23 @@
         "</div>" +
 
         '<div class="section">' +
-        "<h3>명성 유저</h3><p class=\"hint\">이름 · 활동 포인트는 입력 후 바로 저장돼요. 활동 포인트 경고는 버튼으로 직접 지정하세요.</p>" +
+        "<h3>길드원 신고 등록</h3><p class=\"hint\">타 길드에서 신고가 들어오면 길드원을 선택하고 사유를 적어 등록하세요. \"경고 · 주의\" 탭에는 누적 건수만 보이고, 눌러서 펼쳐야 사유가 보여요.</p>" +
+        '<div class="row">' +
+        '<select id="reportMemberSel">' + (reportMemberOptions || "<option value=\"\">길드원 없음</option>") + "</select>" +
+        '<input type="text" id="reportReasonInput" placeholder="신고 사유">' +
+        '<button class="btn" id="addReportBtn">등록</button>' +
+        '<button class="btn ghost" id="reportEditToggleBtn">수정</button>' +
+        "</div>" +
+        "</div>" +
+        reportEditBox +
+
+        '<div class="section">' +
+        "<h3>명성 유저</h3><p class=\"hint\">이름 · 활동 포인트 · 명성은 입력 후 바로 저장돼요. 경고는 버튼으로 직접 지정하세요.</p>" +
         (reputeMembersList.length ? '<div class="table-wrap"><table>' + memberTableHead + "<tbody>" + reputeMemberRows + "</tbody></table></div>" : '<p class="hint">등록된 명성 유저가 없어요.</p>') +
         "</div>" +
 
         '<div class="section">' +
-        "<h3>길랭 유저</h3><p class=\"hint\">이번 주 참여 현황과 경고 기준은 '설정'에서 확인 · 설정할 수 있어요.</p>" +
+        "<h3>길랭 유저</h3><p class=\"hint\">이름 · 활동 포인트 · 명성은 입력 후 바로 저장돼요. 이번 주 참여 현황과 경고 기준은 '설정'에서 확인 · 설정할 수 있어요.</p>" +
         (guildRankMembersList.length ? '<div class="table-wrap"><table>' + memberTableHeadNoWarn + "<tbody>" + guildRankMemberRows + "</tbody></table></div>" : '<p class="hint">등록된 길랭 유저가 없어요.</p>') +
         "</div>" +
 
@@ -847,14 +1099,6 @@
           "</div>"
         ) : "")
       );
-    } else if (adminSubTab === "attendance") {
-      subContent = (
-        '<div class="section">' +
-        "<h3>출석체크 처리</h3><p class=\"hint\">날짜를 고르고 출석한 길드원을 눌러 표시하세요.</p>" +
-        '<div class="row" style="margin-bottom:12px"><input type="date" id="adminDatePick" value="' + adminDate + '"></div>' +
-        (members.length ? '<div class="chip-grid">' + attendanceChips + "</div>" : '<p class="hint">등록된 길드원이 없어요.</p>') +
-        "</div>"
-      );
     } else if (adminSubTab === "rank") {
       subContent = (
         '<div class="section">' +
@@ -866,6 +1110,53 @@
         '<button class="btn" id="addRankBtn">기록 추가</button>' +
         "</div>" +
         (recentRecords ? '<div class="table-wrap"><table><thead><tr><th>날짜</th><th>길드원</th><th>결과</th><th></th></tr></thead><tbody>' + recentRecords + "</tbody></table></div>" : '<p class="hint">아직 기록이 없어요.</p>') +
+        "</div>"
+      );
+    } else if (adminSubTab === "inactivity") {
+      subContent = (
+        '<div class="section">' +
+        "<h3>활동 불가 안내 등록</h3><p class=\"hint\">여기에 등록하면 화면 상단 확성기 아이콘을 눌렀을 때 모든 길드원이 볼 수 있어요.</p>" +
+        '<div class="row" style="margin-bottom:12px">' +
+        '<select id="inactiveMemberSel">' + (memberOptions || "<option value=\"\">길드원 없음</option>") + "</select>" +
+        '<input type="text" id="inactivePeriodInput" placeholder="기간 (예: 9/10~9/15)">' +
+        '<input type="text" id="inactiveReasonInput" placeholder="사유">' +
+        '<button class="btn" id="addInactiveBtn">추가</button>' +
+        "</div>" +
+        (inactivityRows ? '<div class="table-wrap"><table><thead><tr><th>길드원</th><th>기간</th><th>사유</th><th></th></tr></thead><tbody>' + inactivityRows + "</tbody></table></div>" : '<p class="hint">등록된 활동 불가 안내가 없어요.</p>') +
+        "</div>"
+      );
+    } else if (adminSubTab === "otherguilds") {
+      subContent = (
+        '<div class="section">' +
+        "<h3>타 길드 정보</h3><p class=\"hint\">길드 이름과 특이사항을 등록하면 \"경고 · 주의\" 탭 아래쪽에 표시돼요. 같은 길드 이름으로 등록하면 한 카드에 묶여서 보여요.</p>" +
+        '<div class="row" style="margin-bottom:12px">' +
+        '<input type="text" id="guildNameInput" placeholder="길드 이름">' +
+        '<input type="text" id="guildNoteInput" placeholder="특이사항">' +
+        '<button class="btn" id="addGuildInfoBtn">추가</button>' +
+        "</div>" +
+        (otherGuildCards || '<p class="hint">등록된 타 길드 정보가 없어요.</p>') +
+        "</div>"
+      );
+    } else if (adminSubTab === "waitlist") {
+      subContent = (
+        '<div class="section">' +
+        "<h3>길드 가입 대기자</h3>" +
+        '<div class="row" style="margin-bottom:12px">' +
+        '<input type="text" id="joinWaitName" placeholder="이름">' +
+        '<input type="text" id="joinWaitNote" placeholder="메모 (선택)">' +
+        '<button class="btn" id="addJoinWaitBtn">추가</button>' +
+        "</div>" +
+        (joinWaitlist.length ? '<div class="table-wrap"><table><thead><tr><th>이름</th><th>메모</th><th></th></tr></thead><tbody>' + waitlistRows(joinWaitlist) + "</tbody></table></div>" : '<p class="hint">등록된 가입 대기자가 없어요.</p>') +
+        "</div>" +
+
+        '<div class="section">' +
+        "<h3>카드교환 대기자</h3>" +
+        '<div class="row" style="margin-bottom:12px">' +
+        '<input type="text" id="cardWaitName" placeholder="이름">' +
+        '<input type="text" id="cardWaitNote" placeholder="메모 (선택)">' +
+        '<button class="btn" id="addCardWaitBtn">추가</button>' +
+        "</div>" +
+        (cardWaitlist.length ? '<div class="table-wrap"><table><thead><tr><th>이름</th><th>메모</th><th></th></tr></thead><tbody>' + waitlistRows(cardWaitlist) + "</tbody></table></div>" : '<p class="hint">등록된 카드교환 대기자가 없어요.</p>') +
         "</div>"
       );
     } else if (adminSubTab === "settings") {
@@ -885,12 +1176,16 @@
       subContent = (
         '<div class="section">' +
         "<h3>처음 들어가면</h3>" +
-        '<p class="hint">사이트에 처음 들어가면 "J길드를 위한 내부 전용 페이지이며 외부 유출을 금한다"는 안내 팝업과 저작권 문구(ⓒ 후부리 &amp; J길드)가 떠요. "오늘 하루 보지 않기"를 체크하고 확인을 누르면 그날은 다시 안 뜨고, 체크하지 않으면 다음에 들어올 때 또 떠요. 화면 왼쪽(모바일은 하단)에 출석체크 · 길드 랭크 · 경고·주의 · 길랭 횟수 · 관리, 이렇게 5개의 탭이 있어요.</p>' +
+        '<p class="hint">사이트에 처음 들어가면 "J길드를 위한 내부 전용 페이지이며 외부 유출을 금한다"는 안내 팝업과 저작권 문구(ⓒ 후부리 &amp; J길드)가 떠요. "오늘 하루 보지 않기"를 체크하고 확인을 누르면 그날은 다시 안 뜨고, 체크하지 않으면 다음에 들어올 때 또 떠요. 화면 왼쪽(모바일은 하단)에 길드 랭크 · 경고·주의 · 길랭 횟수 · 관리, 이렇게 4개의 탭이 있어요. 화면 맨 위 오른쪽의 확성기 · 느낌표 아이콘으로 활동 불가 안내와 대기자 명단을 볼 수 있어요.</p>' +
         "</div>" +
 
         '<div class="section">' +
-        "<h3>출석체크 탭</h3>" +
-        '<p class="hint">오늘 날짜 기준으로 아직 출석체크를 안 한 길드원 명단이 보여요. 전체 길드원 수, 출석 완료 인원, 미완료 인원이 상단에 숫자로 표시돼요. 상단 날짜 옆에는 오늘 마지막으로 출석체크를 누른 시각도 함께 보여요. 출석 처리 자체는 이 관리 탭의 "출석체크 관리"에서 해요.</p>' +
+        "<h3>확성기 · 느낌표 아이콘</h3>" +
+        '<ul class="mini-list">' +
+        '<li><b>확성기</b> — 누르면 누가, 언제, 어떤 이유로 활동이 어려운지 안내 목록이 떠요. 등록은 관리 탭의 "활동 불가 안내"에서 해요.</li>' +
+        '<li><b>느낌표</b> — 누르면 길드 가입 대기자 · 카드교환 대기자 명단이 떠요. 등록은 관리 탭의 "대기자 목록"에서 해요.</li>' +
+        "</ul>" +
+        '<p class="hint">둘 다 비밀번호 없이 누구나 볼 수 있어요.</p>' +
         "</div>" +
 
         '<div class="section">' +
@@ -900,13 +1195,18 @@
         "<li>각 줄에 최근 7경기 결과가 초록 테두리 \"승\" / 빨강 테두리 \"패\" 도장 모양으로 나오고, 가장 최근 경기가 오른쪽 끝에 와요.</li>" +
         "<li>맨 오른쪽 승률(%)은 최근 7경기가 아니라 그 길드원의 지금까지 전체 전적을 통틀어 계산돼요.</li>" +
         "<li>이번 주(월~일 기준) 길드 랭크를 5회 이상 참여한 길드원은 줄 배경이 연한 하늘색, 7회 참여하면 연한 노란색으로 표시돼요.</li>" +
-        "<li>상단에 오늘 날짜와 \"9월 2주차\" 같은 몇 주차인지도 함께 보여요.</li>" +
+        "<li>상단에 오늘 날짜와 \"9월 2주차\" 같은 몇 주차인지, 마지막으로 기록이 추가·삭제된 시각도 함께 보여요.</li>" +
+        "<li>오른쪽 위 왕관 아이콘(\"담당자\")을 누르면 \"일별 길드 랭크 운영진\" 칸이 떠요. 월~일 요일별로 그날 길드 랭크를 담당하는 사람 닉네임을 적을 수 있어요. 관리자 비밀번호 없이 누구나 바로 적고 저장할 수 있어요.</li>" +
         "</ul>" +
         "</div>" +
 
         '<div class="section">' +
         "<h3>경고 · 주의 탭</h3>" +
-        '<p class="hint">이 관리 탭의 "길드원 관리"에서 관리자가 "활동 포인트 경고 지정" 버튼을 눌러 직접 지정한 명성 유저만 여기 떠요. 길랭 유저는 여기 뜨지 않고, 바로 아래 "길랭 횟수" 탭에서 따로 확인해요.</p>' +
+        '<ul class="mini-list">' +
+        '<li><b>명성 유저 경고</b> — 관리 탭 "길드원 관리"에서 관리자가 직접 경고 대상으로 지정한 명성 유저만 여기 떠요. 활동 포인트와 명성 수치도 함께 보여요.</li>' +
+        '<li><b>길드원 누적 신고</b> — 타 길드에서 들어온 신고 누적 건수예요. 눌러서 펼치면 신고 사유와 날짜가 보여요. 길랭 유저는 여기 뜨지 않고 "길랭 횟수" 탭에서 따로 확인해요.</li>' +
+        '<li><b>타 길드 정보</b> — 다른 길드 관련 참고 정보예요.</li>' +
+        "</ul>" +
         "</div>" +
 
         '<div class="section">' +
@@ -916,13 +1216,15 @@
 
         '<div class="section">' +
         "<h3>관리 탭 (지금 보고 있는 이 탭)</h3>" +
-        '<p class="hint">처음 들어가면 관리자 비밀번호를 한 번 설정해야 하고, 이후에는 매번 비밀번호를 입력해야 들어갈 수 있어요. 아래 5개 카테고리로 나뉘어 있어요.</p>' +
+        '<p class="hint">처음 들어가면 관리자 비밀번호를 한 번 설정해야 하고, 이후에는 매번 비밀번호를 입력해야 들어갈 수 있어요. 아래 7개 카테고리로 나뉘어 있어요.</p>' +
         '<ul class="mini-list">' +
-        '<li><b>① 길드원 관리</b> — 새 길드원 추가(이름 + 명성 유저 / 길랭 유저 / 관리자 유형 체크, 여러 개 동시 체크 가능), 명성 유저 목록(이름 · 활동 포인트 저장 + 활동 포인트 경고 지정), 길랭 유저 목록(이름 · 활동 포인트 · 유형만 관리, 경고는 자동 계산), 관리자 목록(이름 · 유형만), 유형 미지정 길드원 목록.</li>' +
-        '<li><b>② 출석체크 관리</b> — 날짜를 고르고 출석한 길드원을 하나씩 눌러서 표시해요 (다시 누르면 취소).</li>' +
-        '<li><b>③ 길드 랭크 기록</b> — 길드원, 날짜, 승/패를 선택하고 "기록 추가"를 누르면 랭크 탭과 길랭 횟수 탭에 바로 반영돼요. 잘못 입력한 기록은 목록에서 "삭제"로 지울 수 있어요.</li>' +
-        '<li><b>④ 설정</b> — 길랭 경고 기준(주당 최소 참여 횟수를 입력·저장하면 그 기준으로 길랭 횟수 탭과 아래 참여 현황표에 반영돼요) · 관리자 비밀번호 변경.</li>' +
-        "<li><b>⑤ 사용 가이드</b> — 지금 보고 있는 이 안내예요. 사이트를 떠나지 않고 언제든 다시 확인할 수 있어요.</li>" +
+        '<li><b>① 길드원 관리</b> — 새 길드원 추가, 길드원 신고 등록(길드원 선택 + 사유 입력 → 경고·주의 탭에 누적 건수로 표시, "수정" 버튼을 누르면 그 길드원의 신고 내역을 하나씩 삭제할 수 있어요), 명성 유저 목록(이름 · 활동 포인트 · 명성 저장 + 경고 지정), 길랭 유저 목록(이름 · 활동 포인트 · 명성 · 유형만 관리, 경고는 자동 계산), 관리자 목록(이름 · 유형만), 유형 미지정 길드원 목록.</li>' +
+        '<li><b>② 길드 랭크 기록</b> — 길드원, 날짜, 승/패를 선택하고 "기록 추가"를 누르면 랭크 탭과 길랭 횟수 탭에 바로 반영돼요. 잘못 입력한 기록은 목록에서 "삭제"로 지울 수 있어요.</li>' +
+        '<li><b>③ 활동 불가 안내</b> — 길드원, 기간, 사유를 입력해 등록하면 상단 확성기 아이콘 목록에 바로 반영돼요.</li>' +
+        '<li><b>④ 타 길드 정보</b> — 길드 이름과 특이사항을 등록하면 경고·주의 탭 아래쪽에 표시돼요. 같은 길드 이름으로 여러 번 등록하면 한 카드에 묶여서 보여요.</li>' +
+        '<li><b>⑤ 대기자 목록</b> — 길드 가입 대기자와 카드교환 대기자를 각각 이름 · 메모로 등록·관리해요. 등록하면 상단 느낌표 아이콘 목록에 바로 반영돼요.</li>' +
+        '<li><b>⑥ 설정</b> — 길랭 경고 기준(주당 최소 참여 횟수를 입력·저장하면 그 기준으로 길랭 횟수 탭과 아래 참여 현황표에 반영돼요) · 관리자 비밀번호 변경.</li>' +
+        "<li><b>⑦ 사용 가이드</b> — 지금 보고 있는 이 안내예요. 사이트를 떠나지 않고 언제든 다시 확인할 수 있어요.</li>" +
         "</ul>" +
         "</div>" +
 
@@ -939,7 +1241,7 @@
     }
 
     return (
-      '<div class="panel-head"><div><h2>관리</h2><p>길드원 · 출석 · 랭크 · 활동 포인트를 관리해요.</p></div>' +
+      '<div class="panel-head"><div><h2>관리</h2><p>길드원 · 랭크 · 경고 · 길드 정보를 관리해요.</p></div>' +
       '<button class="btn ghost small" id="logoutBtn">로그아웃</button></div>' +
       '<div class="adminSubNav">' + subNav + "</div>" +
       subContent
@@ -956,6 +1258,9 @@
 
   /* ---------------- event wiring per render ---------------- */
   function wireTabEvents() {
+    var rankDutyBtn = document.getElementById("rankDutyBtn");
+    if (rankDutyBtn) rankDutyBtn.onclick = showRankDutyModal;
+
     if (currentTab !== "admin") return;
 
     var setupForm = document.getElementById("setupForm");
@@ -1036,10 +1341,16 @@
         toast("활동 포인트를 저장했어요");
       };
     });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-role="mreputation"]'), function (el) {
+      el.onchange = async function () {
+        await updateDoc(doc(db, "members", el.getAttribute("data-id")), { reputation: Number(el.value) || 0 });
+        toast("명성을 저장했어요");
+      };
+    });
     Array.prototype.forEach.call(document.querySelectorAll('[data-role="mdelete"]'), function (el) {
       el.onclick = async function () {
         var m = memberById(el.getAttribute("data-id"));
-        var ok = await confirmDialog((m ? m.name : "이 길드원") + " 님을 삭제할까요? 출석 · 랭크 기록은 남아있어요.", "삭제");
+        var ok = await confirmDialog((m ? m.name : "이 길드원") + " 님을 삭제할까요? 랭크 기록은 남아있어요.", "삭제");
         if (!ok) return;
         await deleteDoc(doc(db, "members", el.getAttribute("data-id")));
         toast("삭제했어요");
@@ -1065,25 +1376,47 @@
         var m = memberById(el.getAttribute("data-id"));
         var next = !(m && m.lowActivity);
         await updateDoc(doc(db, "members", el.getAttribute("data-id")), { lowActivity: next });
+        await updateDoc(doc(db, "config", "settings"), { warningLastUpdatedAt: new Date().toISOString() });
         toast(next ? "경고 대상으로 지정했어요" : "경고 대상에서 해제했어요");
       };
     });
 
-    var adminDatePick = document.getElementById("adminDatePick");
-    if (adminDatePick) adminDatePick.onchange = function () {
-      adminDate = adminDatePick.value || toDateKey(new Date());
-      watchAdminAttendance();
+    var addReportBtn = document.getElementById("addReportBtn");
+    if (addReportBtn) addReportBtn.onclick = async function () {
+      var sel = document.getElementById("reportMemberSel");
+      var reasonInput = document.getElementById("reportReasonInput");
+      if (!sel.value) { toast("먼저 길드원을 등록해주세요"); return; }
+      var reason = reasonInput.value.trim();
+      if (!reason) { toast("신고 사유를 입력해주세요"); return; }
+      var m = memberById(sel.value);
+      var nextReports = ((m && m.reports) || []).concat([{ reason: reason, date: toDateKey(new Date()) }]);
+      await updateDoc(doc(db, "members", sel.value), { reports: nextReports });
+      await updateDoc(doc(db, "config", "settings"), { warningLastUpdatedAt: new Date().toISOString() });
+      reasonInput.value = "";
+      toast("신고를 등록했어요");
+    };
+
+    var reportEditToggleBtn = document.getElementById("reportEditToggleBtn");
+    if (reportEditToggleBtn) reportEditToggleBtn.onclick = function () {
+      var sel = document.getElementById("reportMemberSel");
+      var id = sel ? sel.value : "";
+      if (!id) { toast("먼저 길드원을 선택해주세요"); return; }
+      reportEditMemberId = (reportEditMemberId === id) ? null : id;
       render();
     };
-    Array.prototype.forEach.call(document.querySelectorAll('[data-role="toggleatt"]'), function (el) {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-role="reportdelete"]'), function (el) {
       el.onclick = async function () {
-        var id = el.getAttribute("data-id");
-        var ref = doc(db, "attendance", adminDate);
-        var snap = await getDoc(ref);
-        var ids = (snap.exists() && snap.data().checkedIds) || [];
-        var idx = ids.indexOf(id);
-        if (idx === -1) ids = ids.concat([id]); else { ids = ids.slice(); ids.splice(idx, 1); }
-        await setDoc(ref, { checkedIds: ids, lastCheckedAt: new Date().toISOString() });
+        var mid = el.getAttribute("data-id");
+        var idx = Number(el.getAttribute("data-idx"));
+        var m = memberById(mid);
+        if (!m || !m.reports) return;
+        var ok = await confirmDialog("이 신고 내역을 삭제할까요?", "삭제");
+        if (!ok) return;
+        var nextReports = m.reports.slice();
+        nextReports.splice(idx, 1);
+        await updateDoc(doc(db, "members", mid), { reports: nextReports });
+        await updateDoc(doc(db, "config", "settings"), { warningLastUpdatedAt: new Date().toISOString() });
+        toast("신고 내역을 삭제했어요");
       };
     });
 
@@ -1101,6 +1434,7 @@
         result: resultSel.value,
         createdAt: Date.now()
       });
+      await updateDoc(doc(db, "config", "settings"), { rankLastUpdatedAt: new Date().toISOString() });
       toast("기록을 추가했어요");
     };
     Array.prototype.forEach.call(document.querySelectorAll('[data-role="rdelete"]'), function (el) {
@@ -1108,6 +1442,85 @@
         var ok = await confirmDialog("이 랭크 기록을 삭제할까요?", "삭제");
         if (!ok) return;
         await deleteDoc(doc(db, "rankRecords", el.getAttribute("data-id")));
+        await updateDoc(doc(db, "config", "settings"), { rankLastUpdatedAt: new Date().toISOString() });
+        toast("삭제했어요");
+      };
+    });
+
+    var addInactiveBtn = document.getElementById("addInactiveBtn");
+    if (addInactiveBtn) addInactiveBtn.onclick = async function () {
+      var sel = document.getElementById("inactiveMemberSel");
+      var periodInput = document.getElementById("inactivePeriodInput");
+      var reasonInput = document.getElementById("inactiveReasonInput");
+      if (!sel.value) { toast("먼저 길드원을 등록해주세요"); return; }
+      var m = memberById(sel.value);
+      await addDoc(collection(db, "inactivityNotices"), {
+        memberId: sel.value,
+        memberName: m ? m.name : "(이름없음)",
+        period: periodInput.value.trim(),
+        reason: reasonInput.value.trim(),
+        createdAt: Date.now()
+      });
+      periodInput.value = ""; reasonInput.value = "";
+      toast("활동 불가 안내를 등록했어요");
+    };
+    Array.prototype.forEach.call(document.querySelectorAll('[data-role="inactivedelete"]'), function (el) {
+      el.onclick = async function () {
+        var ok = await confirmDialog("이 활동 불가 안내를 삭제할까요?", "삭제");
+        if (!ok) return;
+        await deleteDoc(doc(db, "inactivityNotices", el.getAttribute("data-id")));
+        toast("삭제했어요");
+      };
+    });
+
+    var addGuildInfoBtn = document.getElementById("addGuildInfoBtn");
+    if (addGuildInfoBtn) addGuildInfoBtn.onclick = async function () {
+      var nameInput = document.getElementById("guildNameInput");
+      var noteInput = document.getElementById("guildNoteInput");
+      var name = nameInput.value.trim();
+      if (!name) { toast("길드 이름을 입력해주세요"); return; }
+      await addDoc(collection(db, "otherGuilds"), {
+        guildName: name,
+        note: noteInput.value.trim(),
+        updatedAt: Date.now()
+      });
+      nameInput.value = ""; noteInput.value = "";
+      toast("타 길드 정보를 등록했어요");
+    };
+    Array.prototype.forEach.call(document.querySelectorAll('[data-role="guildinfodelete"]'), function (el) {
+      el.onclick = async function () {
+        var ok = await confirmDialog("이 타 길드 정보를 삭제할까요?", "삭제");
+        if (!ok) return;
+        await deleteDoc(doc(db, "otherGuilds", el.getAttribute("data-id")));
+        toast("삭제했어요");
+      };
+    });
+
+    var addJoinWaitBtn = document.getElementById("addJoinWaitBtn");
+    if (addJoinWaitBtn) addJoinWaitBtn.onclick = async function () {
+      var nameInput = document.getElementById("joinWaitName");
+      var noteInput = document.getElementById("joinWaitNote");
+      var name = nameInput.value.trim();
+      if (!name) { toast("이름을 입력해주세요"); return; }
+      await addDoc(collection(db, "waitlist"), { type: "join", name: name, note: noteInput.value.trim(), createdAt: Date.now() });
+      nameInput.value = ""; noteInput.value = "";
+      toast("가입 대기자로 등록했어요");
+    };
+    var addCardWaitBtn = document.getElementById("addCardWaitBtn");
+    if (addCardWaitBtn) addCardWaitBtn.onclick = async function () {
+      var nameInput = document.getElementById("cardWaitName");
+      var noteInput = document.getElementById("cardWaitNote");
+      var name = nameInput.value.trim();
+      if (!name) { toast("이름을 입력해주세요"); return; }
+      await addDoc(collection(db, "waitlist"), { type: "card", name: name, note: noteInput.value.trim(), createdAt: Date.now() });
+      nameInput.value = ""; noteInput.value = "";
+      toast("카드교환 대기자로 등록했어요");
+    };
+    Array.prototype.forEach.call(document.querySelectorAll('[data-role="waitlistdelete"]'), function (el) {
+      el.onclick = async function () {
+        var ok = await confirmDialog("이 대기자를 삭제할까요?", "삭제");
+        if (!ok) return;
+        await deleteDoc(doc(db, "waitlist", el.getAttribute("data-id")));
         toast("삭제했어요");
       };
     });
