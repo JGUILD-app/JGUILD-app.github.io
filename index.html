@@ -913,10 +913,14 @@
     if (guildRankMembers.length === 0) {
       body = emptyState("등록된 길랭 유저가 없어요", "관리 탭에서 길랭 유저를 먼저 추가해주세요.");
     } else {
+      var sortedGuildRankMembers = guildRankMembers.slice().sort(function (a, b) {
+        return guildRankWeeklyCount(a.id) - guildRankWeeklyCount(b.id);
+      });
       body = '<div class="table-wrap"><table><thead><tr><th>길드원</th><th>이번 주 길랭 횟수</th></tr></thead><tbody>' +
-        guildRankMembers.map(function (m) {
+        sortedGuildRankMembers.map(function (m) {
           var n = guildRankWeeklyCount(m.id);
-          return "<tr><td>" + escapeHtml(m.name) + '</td><td class="mono">' + n + " / " + weeklyMin + "</td></tr>";
+          var low = n < weeklyMin;
+          return "<tr><td>" + escapeHtml(m.name) + '</td><td class="mono"' + (low ? ' style="color:var(--negative)"' : ' style="color:var(--positive)"') + ">" + n + " / " + weeklyMin + "</td></tr>";
         }).join("") + "</tbody></table></div>";
     }
 
@@ -1249,7 +1253,7 @@
 
         '<div class="section">' +
         "<h3>길랭 횟수 탭</h3>" +
-        '<p class="hint">길랭 유저들의 이번 주(월~일 기준) 길드 랭크 참여 횟수를 보여주는 탭이에요. 길랭은 하루에 최대 1회만 할 수 있어서 주 중반에는 기준 횟수를 못 채운 상태가 자연스러운 거라, 경고처럼 빨간색으로 표시하지 않고 숫자만 담백하게 보여줘요.</p>' +
+        '<p class="hint">길랭 유저들의 이번 주(월~일 기준) 길드 랭크 참여 횟수를 보여주는 탭이에요. 참여 횟수가 적은 사람이 맨 위로 오게 정렬되고, 기준 횟수 미달이면 빨간색, 충족이면 초록색으로 표시돼요.</p>' +
         "</div>" +
 
         '<div class="section">' +
