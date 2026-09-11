@@ -179,8 +179,9 @@
   th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--paper-border); white-space: nowrap; }
   th { color: var(--ink-faint); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
   tr:last-child td { border-bottom: none; }
-  td input[type="number"] { width: 72px; }
+  td input[type="number"] { width: 96px; }
   td input[type="text"] { width: 120px; }
+  .warncell { display: flex; gap: 6px; flex-wrap: nowrap; }
 
   .toggle-chip {
     display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 12px; cursor: pointer;
@@ -693,7 +694,7 @@
 
   /* ---------------- nav ---------------- */
   function buildNav() {
-    var warnCount = members.filter(function (m) { return !!m.lowActivity; }).length;
+    var warnCount = members.filter(function (m) { return !!m.lowActivity || !!m.lowReputation; }).length;
     var badges = { warning: warnCount };
 
     [document.getElementById("tabrail"), document.getElementById("bottombar")].forEach(function (rail) {
@@ -807,20 +808,32 @@
         emptyState("아직 등록된 길드원이 없어요", "관리 탭에서 길드원을 먼저 추가해주세요.");
     }
 
-    var reputeWarn = members.filter(function (m) { return !!m.lowActivity; });
+    var reputeWarn = members.filter(function (m) { return !!m.repute && (!!m.lowActivity || !!m.lowReputation); });
     var reputeBody;
     if (reputeWarn.length === 0) {
       reputeBody = emptyState("경고 대상인 명성 유저가 없어요", "관리 탭에서 경고 대상으로 지정된 명성 유저가 없어요.", ICONS.check);
     } else {
       reputeBody = '<div class="table-wrap"><table><thead><tr><th>길드원</th><th>활동 포인트</th><th>명성</th></tr></thead><tbody>' +
         reputeWarn.map(function (m) {
-          return "<tr><td>" + escapeHtml(m.name) + "</td><td class=\"mono\" style=\"color:var(--negative)\">" + Number(m.points || 0) + "</td><td class=\"mono\">" + Number(m.reputation || 0) + "</td></tr>";
+          return "<tr><td>" + escapeHtml(m.name) + '</td><td class="mono"' + (m.lowActivity ? ' style="color:var(--negative)"' : "") + ">" + Number(m.points || 0) + '</td><td class="mono"' + (m.lowReputation ? ' style="color:var(--negative)"' : "") + ">" + Number(m.reputation || 0) + "</td></tr>";
+        }).join("") + "</tbody></table></div>";
+    }
+
+    var guildRankWarn = members.filter(function (m) { return !!m.guildRank && !!m.lowReputation; });
+    var guildRankWarnBody;
+    if (guildRankWarn.length === 0) {
+      guildRankWarnBody = emptyState("경고 대상인 길랭 유저가 없어요", "관리 탭에서 경고 대상으로 지정된 길랭 유저가 없어요.", ICONS.check);
+    } else {
+      guildRankWarnBody = '<div class="table-wrap"><table><thead><tr><th>길드원</th><th>명성</th></tr></thead><tbody>' +
+        guildRankWarn.map(function (m) {
+          return "<tr><td>" + escapeHtml(m.name) + '</td><td class="mono" style="color:var(--negative)">' + Number(m.reputation || 0) + "</td></tr>";
         }).join("") + "</tbody></table></div>";
     }
 
     return (
       '<div class="panel-head"><div><h2>경고 · 주의</h2>' + headP + '</div></div>' +
-      '<div class="section"><h3>명성 유저 경고</h3><p class="hint">관리 탭에서 경고 대상으로 직접 지정한 명성 유저예요.</p>' + reputeBody + "</div>"
+      '<div class="section"><h3>명성 유저 경고</h3><p class="hint">관리 탭에서 경고 대상으로 직접 지정한 명성 유저예요.</p>' + reputeBody + "</div>" +
+      '<div class="section"><h3>길랭 유저 경고</h3><p class="hint">관리 탭에서 명성 경고 대상으로 직접 지정한 길랭 유저예요.</p>' + guildRankWarnBody + "</div>"
     );
   }
 
@@ -982,7 +995,10 @@
         '<td><input type="number" value="' + Number(m.points || 0) + '" data-role="mpoints" data-id="' + m.id + '"></td>' +
         '<td><input type="number" value="' + Number(m.reputation || 0) + '" data-role="mreputation" data-id="' + m.id + '"></td>' +
         typeCheckboxes(m) +
-        '<td><button class="btn small ' + (m.lowActivity ? "danger" : "ghost") + '" data-role="mlowtoggle" data-id="' + m.id + '">' + (m.lowActivity ? "활동 포인트 경고 중" : "활동 포인트 경고 지정") + "</button></td>" +
+        '<td><div class="warncell">' +
+        '<button class="btn small ' + (m.lowActivity ? "danger" : "ghost") + '" data-role="mlowtoggle" data-id="' + m.id + '" title="' + (m.lowActivity ? "활동 포인트 경고 중 (누르면 해제)" : "활동 포인트 경고로 지정") + '">활동</button>' +
+        '<button class="btn small ' + (m.lowReputation ? "danger" : "ghost") + '" data-role="mrepwarntoggle" data-id="' + m.id + '" title="' + (m.lowReputation ? "명성 경고 중 (누르면 해제)" : "명성 경고로 지정") + '">명성</button>' +
+        "</div></td>" +
         '<td><button class="btn danger small" data-role="mdelete" data-id="' + m.id + '">삭제</button></td>' +
         "</tr>"
       );
@@ -991,9 +1007,11 @@
       return (
         "<tr>" +
         '<td><input type="text" value="' + escapeHtml(m.name) + '" data-role="mname" data-id="' + m.id + '"></td>' +
-        '<td><input type="number" value="' + Number(m.points || 0) + '" data-role="mpoints" data-id="' + m.id + '"></td>' +
         '<td><input type="number" value="' + Number(m.reputation || 0) + '" data-role="mreputation" data-id="' + m.id + '"></td>' +
         typeCheckboxes(m) +
+        '<td><div class="warncell">' +
+        '<button class="btn small ' + (m.lowReputation ? "danger" : "ghost") + '" data-role="mrepwarntoggle" data-id="' + m.id + '" title="' + (m.lowReputation ? "명성 경고 중 (누르면 해제)" : "명성 경고로 지정") + '">명성</button>' +
+        "</div></td>" +
         '<td><button class="btn danger small" data-role="mdelete" data-id="' + m.id + '">삭제</button></td>' +
         "</tr>"
       );
@@ -1007,8 +1025,8 @@
         "</tr>"
       );
     }
-    var memberTableHead = "<thead><tr><th>이름</th><th>활동 포인트</th><th>명성</th><th>유형</th><th>활동 포인트 경고</th><th></th></tr></thead>";
-    var memberTableHeadNoWarn = "<thead><tr><th>이름</th><th>활동 포인트</th><th>명성</th><th>유형</th><th></th></tr></thead>";
+    var memberTableHead = "<thead><tr><th>이름</th><th>활동 포인트</th><th>명성</th><th>유형</th><th>경고</th><th></th></tr></thead>";
+    var memberTableHeadNoWarn = "<thead><tr><th>이름</th><th>명성</th><th>유형</th><th>경고</th><th></th></tr></thead>";
     var memberTableHeadManager = "<thead><tr><th>이름</th><th>유형</th><th></th></tr></thead>";
     var reputeMembersList = members.filter(function (m) { return !!m.repute; });
     var guildRankMembersList = members.filter(function (m) { return !!m.guildRank; });
@@ -1121,12 +1139,12 @@
         reportEditBox +
 
         '<div class="section">' +
-        "<h3>명성 유저</h3><p class=\"hint\">이름 · 활동 포인트 · 명성은 입력 후 바로 저장돼요. 경고는 버튼으로 직접 지정하세요.</p>" +
+        "<h3>명성 유저</h3><p class=\"hint\">이름 · 활동 포인트 · 명성은 입력 후 바로 저장돼요. \"경고\" 칸의 활동 · 명성 버튼으로 각각 경고 대상을 지정하세요.</p>" +
         (reputeMembersList.length ? '<div class="table-wrap"><table>' + memberTableHead + "<tbody>" + reputeMemberRows + "</tbody></table></div>" : '<p class="hint">등록된 명성 유저가 없어요.</p>') +
         "</div>" +
 
         '<div class="section">' +
-        "<h3>길랭 유저</h3><p class=\"hint\">이름 · 활동 포인트 · 명성은 입력 후 바로 저장돼요. 이번 주 참여 현황과 경고 기준은 '설정'에서 확인 · 설정할 수 있어요.</p>" +
+        "<h3>길랭 유저</h3><p class=\"hint\">이름 · 명성은 입력 후 바로 저장돼요. 길랭 참여 횟수 경고는 자동으로 계산되고(기준은 '설정'에서 확인 · 설정), \"경고\" 칸의 명성 버튼으로 명성 경고 대상은 직접 지정하세요.</p>" +
         (guildRankMembersList.length ? '<div class="table-wrap"><table>' + memberTableHeadNoWarn + "<tbody>" + guildRankMemberRows + "</tbody></table></div>" : '<p class="hint">등록된 길랭 유저가 없어요.</p>') +
         "</div>" +
 
@@ -1246,8 +1264,9 @@
         '<div class="section">' +
         "<h3>경고 · 주의 탭</h3>" +
         '<ul class="mini-list">' +
-        '<li><b>명성 유저 경고</b> — 관리 탭 "길드원 관리"에서 관리자가 직접 경고 대상으로 지정한 명성 유저만 여기 떠요. 활동 포인트와 명성 수치도 함께 보여요. 비밀번호 없이 누구나 볼 수 있어요.</li>' +
-        '<li>길드원 누적 신고와 타 길드 정보는 이제 "운영" 탭(비밀번호 필요)에서 따로 확인해요.</li>' +
+        '<li><b>명성 유저 경고</b> — 관리 탭 "길드원 관리"에서 활동 · 명성 버튼으로 경고 대상으로 지정한 명성 유저만 여기 떠요. 활동 포인트와 명성 수치도 함께 보여요.</li>' +
+        '<li><b>길랭 유저 경고</b> — 관리 탭에서 명성 버튼으로 경고 대상으로 지정한 길랭 유저만 여기 떠요.</li>' +
+        '<li>두 목록 모두 비밀번호 없이 누구나 볼 수 있어요. 길드원 누적 신고와 타 길드 정보는 "운영" 탭(비밀번호 필요)에서 따로 확인해요.</li>' +
         "</ul>" +
         "</div>" +
 
@@ -1269,7 +1288,7 @@
         "<h3>관리 탭 (지금 보고 있는 이 탭)</h3>" +
         '<p class="hint">처음 들어가면 관리자 비밀번호를 한 번 설정해야 하고, 이후에는 매번 비밀번호를 입력해야 들어갈 수 있어요. 아래 7개 카테고리로 나뉘어 있어요.</p>' +
         '<ul class="mini-list">' +
-        '<li><b>① 길드원 관리</b> — 새 길드원 추가, 길드원 신고 등록(길드원 선택 + 사유 입력 → 운영 탭에 누적 건수로 표시, "수정" 버튼을 누르면 그 길드원의 신고 내역을 하나씩 삭제할 수 있어요), 명성 유저 목록(이름 · 활동 포인트 · 명성 저장 + 경고 지정), 길랭 유저 목록(이름 · 활동 포인트 · 명성 · 유형만 관리, 경고는 자동 계산), 관리자 목록(이름 · 유형만), 유형 미지정 길드원 목록.</li>' +
+        '<li><b>① 길드원 관리</b> — 새 길드원 추가, 길드원 신고 등록(길드원 선택 + 사유 입력 → 운영 탭에 누적 건수로 표시, "수정" 버튼을 누르면 그 길드원의 신고 내역을 하나씩 삭제할 수 있어요), 명성 유저 목록(이름 · 활동 포인트 · 명성 저장 + "경고" 칸의 활동 · 명성 버튼으로 각각 경고 지정), 길랭 유저 목록(이름 · 명성 · 유형 관리, 참여 횟수 경고는 자동 계산 + "경고" 칸의 명성 버튼으로 명성 경고 지정), 관리자 목록(이름 · 유형만), 유형 미지정 길드원 목록.</li>' +
         '<li><b>② 길드 랭크 기록</b> — 길드원, 날짜, 승/패를 선택하고 "기록 추가"를 누르면 랭크 탭과 길랭 횟수 탭에 바로 반영돼요. 잘못 입력한 기록은 목록에서 "삭제"로 지울 수 있어요.</li>' +
         '<li><b>③ 활동 불가 안내</b> — 길드원, 기간, 사유를 입력해 등록하면 상단 확성기 아이콘 목록에 바로 반영돼요.</li>' +
         '<li><b>④ 타 길드 정보</b> — 길드 이름과 특이사항을 등록하면 운영 탭(비밀번호 필요)에 표시돼요. 같은 길드 이름으로 여러 번 등록하면 한 카드에 묶여서 보여요.</li>' +
@@ -1373,7 +1392,8 @@
         repute: !!(reputeChk && reputeChk.checked),
         guildRank: !!(guildRankChk && guildRankChk.checked),
         manager: !!(managerChk && managerChk.checked),
-        lowActivity: false
+        lowActivity: false,
+        lowReputation: false
       });
       input.value = "";
       if (reputeChk) reputeChk.checked = false;
@@ -1430,7 +1450,16 @@
         var next = !(m && m.lowActivity);
         await updateDoc(doc(db, "members", el.getAttribute("data-id")), { lowActivity: next });
         await updateDoc(doc(db, "config", "settings"), { warningLastUpdatedAt: new Date().toISOString() });
-        toast(next ? "경고 대상으로 지정했어요" : "경고 대상에서 해제했어요");
+        toast(next ? "활동 포인트 경고 대상으로 지정했어요" : "활동 포인트 경고 대상에서 해제했어요");
+      };
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-role="mrepwarntoggle"]'), function (el) {
+      el.onclick = async function () {
+        var m = memberById(el.getAttribute("data-id"));
+        var next = !(m && m.lowReputation);
+        await updateDoc(doc(db, "members", el.getAttribute("data-id")), { lowReputation: next });
+        await updateDoc(doc(db, "config", "settings"), { warningLastUpdatedAt: new Date().toISOString() });
+        toast(next ? "명성 경고 대상으로 지정했어요" : "명성 경고 대상에서 해제했어요");
       };
     });
 
